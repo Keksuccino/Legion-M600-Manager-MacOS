@@ -1,0 +1,57 @@
+# Milestones
+
+## 2026-08-26 — Live Apply repair
+
+- Reproduced the failed configuration path and found that the original transport padded
+  Lenovo's three-byte `05 00 00` commit payload to 64 bytes.
+- Added explicit transfer lengths so checksummed reports remain 64 bytes while short direct
+  commands match the native Windows writes exactly.
+- Matched Lenovo's 150 ms profile-chunk and 100 ms action/commit timing instead of sending
+  later reports too quickly.
+- Added fresh post-write flash-counter verification and visible success feedback.
+- Live-applied the connected mouse configuration. A static-red zone-0 program changed the
+  physical scroll wheel to red while the logo stayed off, confirming writes and revealing
+  that zone 0 is the scroll wheel and zone 1 is the Legion logo. Corrected the UI labels.
+- Confirmed through the running SwiftUI app and `profiles.json` that both lighting and
+  right-button picker changes mutate and persist the selected profile.
+- Expanded deterministic coverage from 10 to 12 tests, including native transfer lengths
+  and exact encoded bytes for both lighting zones plus the right button.
+
+## 2026-08-26 — Native macOS implementation
+
+- Created a maintainable Swift package with `M600Core`, `M600ManagerApp`, `M600CLI`, and protocol tests.
+- Implemented the exact 142-byte profile codec, 160-entry DPI sensor table, two lighting zones, eight visible button bindings, macros, checksum/chunk framing, and onboard commit flow.
+- Implemented IOKit discovery constrained to usage page `0x01`, usage `0x00`, avoiding macOS-owned pointer/keyboard collections.
+- Live read-only query verified against the connected M600: product name, battery 100%, voltage 4224 mV, flash count 25, 2.4 GHz inactive.
+- Added app bundle/release build script, read-only `m600ctl`, user documentation, and full protocol notes.
+- Deliberately did not perform a live profile write, factory reset, firmware update, or pairing operation during development.
+
+## 2026-08-26 — Installer and device inventory
+
+- Installer SHA-256: `1d63c51bdff94b8d0c5c9baa4bb9e1b03fd3324c77d972b0863b33804724fe92`
+- Installer: Lenovo-modified Inno Setup 5.5.7, Legion Accessory Central 2.0.9.10231.
+- Connected device: `Lenovo Legion M600 Wireless Gaming Mouse`.
+- USB vendor/product: `0x17EF:0x60E5`.
+- Device exposes three HID application collections and a 64-byte vendor channel.
+- Windows payload extracted successfully.
+- `legion_hid.exe` decompiled successfully with ILSpy 11.
+- Native route-handler addresses in `ldm_m600.dll` resolved with Rizin.
+
+## Recovered feature surface
+
+- Onboard profile size: 142 bytes.
+- The legacy managed layer models two hardware slots, while the current M600 native path sends one active onboard profile; the macOS app therefore keeps unlimited local profiles and applies the selected one.
+- Eleven 5-byte button action entries per profile.
+- Four independent X/Y DPI stage pairs, 100–16,000 DPI.
+- DPI stage count and active stage.
+- Wired report rates: 125/250/500/1000 Hz.
+- Two 12-byte lighting zones with static, breathing, rainbow, random, and off records.
+- Keyboard/mouse macros with delay, key press/release, mouse press/release, and wheel opcodes.
+- Battery/charging state query and connection events.
+- Factory restore and firmware paths identified but excluded from early live writes.
+
+## Completed focus
+
+The exact 64-byte HID command framing is recovered and documented. A testable
+Swift core, native SwiftUI app, read-only CLI, signed release bundle, and live
+read-only device verification are complete.

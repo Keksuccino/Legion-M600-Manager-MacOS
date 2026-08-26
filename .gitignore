@@ -1,0 +1,18 @@
+.build/
+.swiftpm/
+DerivedData/
+*.app
+.DS_Store
+
+# Reproducible release outputs
+dist/
+
+# Lenovo's original installer and extracted/decompiled proprietary payload.
+# Keep the compact native decompiler output, protocol notes, and analysis helpers tracked.
+setup_v*.exe
+Research/windows-payload/
+Research/decompiled-managed/
+Research/notes/native_*_decompiled.c
+
+# Ghidra's binary database is local WIP state and is not reviewable source.
+Research/ghidra-project/
