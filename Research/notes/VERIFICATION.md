@@ -8,7 +8,7 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 19 tests executed, 0 failures.
+- `swift test`: 20 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
@@ -19,6 +19,8 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - The packaged Buttons screen was visually inspected and shows only the eight user-confirmed
   physical button labels and action controls. Internal hardware-position subtitles are absent,
   while the underlying device offsets and existing assignments remain unchanged.
+- The persisted 97-byte click-plus-`qwertz` macro is covered byte-for-byte across both 57-byte
+  programming chunks, including Lenovo's recovered inter-chunk timing.
 - `plutil`: packaged `Info.plist` is valid.
 - `codesign --verify --deep --strict`: packaged app is valid and satisfies its ad-hoc designated requirement.
 - App executable links only system frameworks/libraries (AppKit, ApplicationServices, IOKit, Foundation, Combine, SwiftUI, and Swift runtime libraries).
@@ -33,7 +35,7 @@ VID:PID: 17EF:60E5
 Configuration interface: connected
 Battery: 100%
 Voltage: 4224 mV
-Flash count: 647
+Flash count: 686
 2.4 GHz link: inactive
 Stealth mode: off
 ```
@@ -68,6 +70,9 @@ command was sent by the diagnostic command.
   selected breathing profile.
 - The packaged build then added serialization between status reads and mutations, was restarted,
   and completed the final read-only device check at flash count 538.
+- Build 10 applied the unchanged selected profile with the corrected multi-chunk macro pacing and
+  reported `Applied profile and lighting · flash #686`. A subsequent read-only CLI query confirmed
+  the same counter. Physical execution of chunk two awaits the user's Top Button test.
 - No factory reset, firmware update, or receiver-pairing command was sent.
 
 ## Release hashes
@@ -75,7 +80,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-3d15b8280cc57300e1418771564b2ff7e61623f735008d99c377b4614ba737e7  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-db408af637a6f3cccb27d777d135623755984c1de1ffb4533c8adba7690285c5  m600ctl
-1219b8cfdac20c416b9e2ffe45b627e708143076de012369028c9e8ca78d35e0  Legion-M600-Manager-macOS-arm64.zip
+7eea29cca3e20cbfeef5250540b321a70cb970cf01eacddd8584f26161b9cb03  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+3364cdaacd46348033548d0c73a8e50f7c18a8a900dc2f7204f3f4805b634293  m600ctl
+dda6227ec7529f0781a1511d566d863bad15683574a9bb0efc0abed27827f980  Legion-M600-Manager-macOS-arm64.zip
 ```

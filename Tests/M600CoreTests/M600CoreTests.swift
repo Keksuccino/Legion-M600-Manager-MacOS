@@ -252,6 +252,76 @@ final class M600CoreTests: XCTestCase {
     XCTAssertTrue(steps.allSatisfy { $0.report.transferLength == 64 })
   }
 
+  func testRecordedClickQwertzMacroSpansTwoNativePacedChunks() {
+    let recordedSteps: [MacroStep] = [
+      .mouseDown(button: .left),
+      .delay(milliseconds: 388),
+      .mouseUp(button: .left),
+      .delay(milliseconds: 1_263),
+      .keyDown(usage: 0x14),
+      .delay(milliseconds: 86),
+      .keyUp(usage: 0x14),
+      .delay(milliseconds: 463),
+      .keyDown(usage: 0x1A),
+      .delay(milliseconds: 79),
+      .keyUp(usage: 0x1A),
+      .delay(milliseconds: 442),
+      .keyDown(usage: 0x08),
+      .delay(milliseconds: 78),
+      .keyUp(usage: 0x08),
+      .delay(milliseconds: 344),
+      .keyDown(usage: 0x15),
+      .delay(milliseconds: 78),
+      .keyUp(usage: 0x15),
+      .delay(milliseconds: 296),
+      .keyDown(usage: 0x17),
+      .delay(milliseconds: 83),
+      .keyUp(usage: 0x17),
+      .delay(milliseconds: 260),
+      .keyDown(usage: 0x1C),
+      .delay(milliseconds: 72),
+      .keyUp(usage: 0x1C),
+    ]
+    let body =
+      Array(repeating: UInt8(0), count: 30)
+      + M600ProfileCodec.encodeMacroBody(recordedSteps)
+    XCTAssertEqual(body.count, 97)
+    XCTAssertEqual(
+      Array(body[30..<57]),
+      [
+        0x04, 0x01, 0x01, 0x01, 0x84, 0x05, 0x01, 0x01, 0x04, 0xEF,
+        0x02, 0x14, 0x01, 0x00, 0x56, 0x03, 0x14, 0x01, 0x01, 0xCF,
+        0x02, 0x1A, 0x01, 0x00, 0x4F, 0x03, 0x1A,
+      ]
+    )
+
+    let programmingSteps = M600PacketBuilder.macroProgrammingSteps(
+      macroID: M600Button.dpi.macroID,
+      body: body,
+      deviceOffset: M600Button.dpi.rawValue
+    )
+    XCTAssertEqual(programmingSteps.count, 5)
+    XCTAssertEqual(
+      programmingSteps.map(\.delayAfterMilliseconds),
+      [200, 150, 200, 200, 100]
+    )
+    XCTAssertEqual(Array(programmingSteps[1].report.bytes.prefix(4)), [0xFE, 8, 0, 97])
+    XCTAssertEqual(
+      Array(programmingSteps[2].report.bytes.prefix(7)),
+      [0xFD, 8, 0, 1, 0, 2, 57]
+    )
+    XCTAssertEqual(Array(programmingSteps[2].report.bytes[7..<64]), Array(body[0..<57]))
+    XCTAssertEqual(
+      Array(programmingSteps[3].report.bytes.prefix(7)),
+      [0xFD, 8, 0, 2, 0, 2, 40]
+    )
+    XCTAssertEqual(Array(programmingSteps[3].report.bytes[7..<47]), Array(body[57..<97]))
+    XCTAssertEqual(
+      Array(programmingSteps[3].report.bytes[47..<64]),
+      Array(repeating: 0, count: 17)
+    )
+  }
+
   func testInputReportParsing() {
     XCTAssertEqual(M600InputReportParser.parse([0x0A, 0, 1]), .stealth(enabled: true))
     XCTAssertEqual(M600InputReportParser.parse([0x0A, 1, 0]), .stealth(enabled: false))

@@ -11,6 +11,14 @@ public struct DeviceWriteStep: Equatable, Sendable {
 }
 
 public enum M600PacketBuilder {
+  // Lenovo's macro writer has a 50 ms device guard on both sides of every
+  // 0xFD chunk in addition to the HID helper's 100 ms post-write delay. The
+  // doubled guard is essential between chunks: using only 100 ms makes the
+  // M600 retain the first 57 bytes and silently discard every later chunk.
+  private static let macroBeginDelayMilliseconds: UInt64 = 200
+  private static let macroLengthDelayMilliseconds: UInt64 = 150
+  private static let macroChunkDelayMilliseconds: UInt64 = 200
+
   public static func direct(
     _ bytes: [UInt8], transferLength: Int = M600Constants.reportLength
   ) -> M600OutputReport {
@@ -67,10 +75,13 @@ public enum M600PacketBuilder {
     let length = UInt16(body.count)
     let chunkCount = Int(ceil(Double(body.count) / Double(M600Constants.maximumMacroChunkPayload)))
     var steps = [
-      DeviceWriteStep(report: direct([0xFB, macroID]), delayAfterMilliseconds: 100),
+      DeviceWriteStep(
+        report: direct([0xFB, macroID]),
+        delayAfterMilliseconds: macroBeginDelayMilliseconds
+      ),
       DeviceWriteStep(
         report: direct([0xFE, macroID, UInt8(length >> 8), UInt8(length & 0xFF)]),
-        delayAfterMilliseconds: 100
+        delayAfterMilliseconds: macroLengthDelayMilliseconds
       ),
     ]
 
@@ -86,7 +97,11 @@ public enum M600PacketBuilder {
         UInt8(total >> 8), UInt8(total & 0xFF),
         UInt8(chunk.count),
       ]
-      steps.append(DeviceWriteStep(report: direct(prefix + chunk), delayAfterMilliseconds: 100))
+      steps.append(
+        DeviceWriteStep(
+          report: direct(prefix + chunk),
+          delayAfterMilliseconds: macroChunkDelayMilliseconds
+        ))
     }
     steps.append(
       DeviceWriteStep(
