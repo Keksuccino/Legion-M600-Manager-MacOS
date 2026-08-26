@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Single profile name in toolbar
+
+- Removed the detail navigation title that duplicated the selected profile name at the leading
+  edge of the window toolbar.
+- Kept the normal app window title plus the centered editable profile-name field and rename control.
+
 ## 2026-08-26 — Tahoe DPI slider appearance
 
 - Removed SwiftUI's stepped-slider presentation from the DPI controls so Tahoe no longer draws

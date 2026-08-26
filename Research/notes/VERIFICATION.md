@@ -14,6 +14,8 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
 - The packaged build was visually inspected on the Performance screen; the DPI sliders have clean
   tracks without Tahoe's dense stepped tick-mark rows.
+- The packaged toolbar retains the normal app title on the left and shows the selected profile name
+  only once, in the centered editable field.
 - `plutil`: packaged `Info.plist` is valid.
 - `codesign --verify --deep --strict`: packaged app is valid and satisfies its ad-hoc designated requirement.
 - App executable links only system frameworks/libraries (AppKit, ApplicationServices, IOKit, Foundation, Combine, SwiftUI, and Swift runtime libraries).
@@ -70,7 +72,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-cb1aa185f8534c7ae8d13dae6cc0fc491bae233b053b2a352c1bb6697c5827d5  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+315ccaad9dd18ce4cd74199013c6d13241bdb6bee9e7207ca1e8df4e001489eb  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 3fd76b2586c392c0c85a8c79389edaafb739583229dd80566605c14c60bd1b44  m600ctl
-77f5983d6fedd9867abe4fb844ba303a579bf72e5e22b4fb6e3f3a4f547d8323  Legion-M600-Manager-macOS-arm64.zip
+1cd47957a464717ea584e1b660d37d37f7080943b0e1f1888b3e3970bff9f5cb  Legion-M600-Manager-macOS-arm64.zip
 ```

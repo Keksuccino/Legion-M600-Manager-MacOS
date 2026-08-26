@@ -42,7 +42,6 @@ struct ProfileEditorView: View {
       }
       .padding(.horizontal, 18)
     }
-    .navigationTitle(profile.name)
     .toolbar {
       ToolbarItem(placement: .principal) {
         TextField("Profile name", text: $profile.name)
