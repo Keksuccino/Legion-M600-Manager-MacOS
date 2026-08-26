@@ -8,7 +8,7 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 18 tests executed, 0 failures.
+- `swift test`: 19 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
@@ -16,6 +16,8 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
   tracks without Tahoe's dense stepped tick-mark rows.
 - The packaged toolbar retains the normal app title on the left and shows the selected profile name
   only once, in the centered editable field.
+- The packaged Buttons screen was visually inspected and shows all eight user-confirmed physical
+  button labels while retaining their existing hardware positions and actions.
 - `plutil`: packaged `Info.plist` is valid.
 - `codesign --verify --deep --strict`: packaged app is valid and satisfies its ad-hoc designated requirement.
 - App executable links only system frameworks/libraries (AppKit, ApplicationServices, IOKit, Foundation, Combine, SwiftUI, and Swift runtime libraries).
@@ -30,7 +32,7 @@ VID:PID: 17EF:60E5
 Configuration interface: connected
 Battery: 100%
 Voltage: 4224 mV
-Flash count: 586
+Flash count: 647
 2.4 GHz link: inactive
 Stealth mode: off
 ```
@@ -72,7 +74,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-315ccaad9dd18ce4cd74199013c6d13241bdb6bee9e7207ca1e8df4e001489eb  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-3fd76b2586c392c0c85a8c79389edaafb739583229dd80566605c14c60bd1b44  m600ctl
-1cd47957a464717ea584e1b660d37d37f7080943b0e1f1888b3e3970bff9f5cb  Legion-M600-Manager-macOS-arm64.zip
+82ec67702660a75d251ece42facbc6bd5e46da5a703d0d3c0546b93debc52bdb  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+db408af637a6f3cccb27d777d135623755984c1de1ffb4533c8adba7690285c5  m600ctl
+f7e9152b9c0a52b2af4113f04571802628237b202cf79853516d124461076267  Legion-M600-Manager-macOS-arm64.zip
 ```

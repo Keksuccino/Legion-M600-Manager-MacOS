@@ -27,6 +27,22 @@ final class M600CoreTests: XCTestCase {
     XCTAssertEqual(MacroMouseButton.middle.rawValue, 3)
   }
 
+  func testPhysicalButtonDisplayNames() {
+    XCTAssertEqual(
+      M600Button.allCases.map(\.displayName),
+      [
+        "Left Mouse Button",
+        "Middle Mouse Button",
+        "Right Mouse Button",
+        "Left Side Front Button",
+        "Left Side Back Button",
+        "Right Side Front Button",
+        "Right Side Back Button",
+        "Top Button",
+      ]
+    )
+  }
+
   func testProfileEncodingPreservesShapeAndHiddenButtons() throws {
     var profile = M600Profile(name: "Mac Profile")
     profile.pollingRate = .hz500

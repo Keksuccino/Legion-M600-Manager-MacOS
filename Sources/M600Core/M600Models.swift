@@ -96,14 +96,14 @@ public enum M600Button: Int, CaseIterable, Codable, Identifiable, Sendable {
 
   public var displayName: String {
     switch self {
-    case .left: return "Left click"
-    case .middle: return "Wheel click"
-    case .right: return "Right click"
-    case .rearSide: return "Rear side button"
-    case .frontSide: return "Front side button"
-    case .rightRear: return "Right rear button"
-    case .rightFront: return "Right front button"
-    case .dpi: return "DPI button"
+    case .left: return "Left Mouse Button"
+    case .middle: return "Middle Mouse Button"
+    case .right: return "Right Mouse Button"
+    case .rearSide: return "Left Side Front Button"
+    case .frontSide: return "Left Side Back Button"
+    case .rightRear: return "Right Side Front Button"
+    case .rightFront: return "Right Side Back Button"
+    case .dpi: return "Top Button"
     }
   }
 

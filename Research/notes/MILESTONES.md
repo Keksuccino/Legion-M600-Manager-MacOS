@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Physical button labels
+
+- Replaced the inferred physical-button names with user-confirmed left/right side and
+  front/back labels, without changing device offsets, default actions, or encoded bytes.
+- Added deterministic coverage for all eight display names.
+
 ## 2026-08-26 — Single profile name in toolbar
 
 - Removed the detail navigation title that duplicated the selected profile name at the leading
