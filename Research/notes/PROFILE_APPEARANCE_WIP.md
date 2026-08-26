@@ -1,7 +1,7 @@
 # Profile appearance — implementation checkpoint
 
 Date: 2026-08-26
-Target release: 0.1.19 (build 20)
+Target release: 0.1.20 (build 21)
 
 ## Model
 
@@ -13,7 +13,8 @@ Target release: 0.1.19 (build 20)
 ## Interface
 
 - The centered profile-name field preserves its original native pill, with independent icon and
-  color controls in separate toolbar items on its left and right.
+  color controls in separate toolbar items on its left and right. Build 21 removes the additional
+  fixed toolbar spacers so both controls use the tighter native inter-item distance.
 - The icon picker contains exactly 50 hardcoded symbols grouped into ten usage categories: generic,
   gaming, music, coding, office, image/art, chatting, streaming/recording, flowers/nature, and
   cleaning/home. The categories organize the catalog internally; the chooser presents one clean

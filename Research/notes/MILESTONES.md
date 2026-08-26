@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Tighter profile appearance controls
+
+- Moved the profile icon and color controls closer to the centered name field by removing the two
+  additional fixed toolbar spacers while preserving all three controls as independent items.
+- Released the spacing refinement as version 0.1.20 (build 21).
+
 ## 2026-08-26 — Custom profile icons and colors
 
 - Added persistent local icon and RGB color metadata to every profile with backward-compatible

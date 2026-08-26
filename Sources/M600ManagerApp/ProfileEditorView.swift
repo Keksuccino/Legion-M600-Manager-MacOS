@@ -49,8 +49,6 @@ struct ProfileEditorView: View {
       }
       .sharedBackgroundVisibility(.hidden)
 
-      ToolbarSpacer(.fixed, placement: .principal)
-
       ToolbarItem(placement: .principal) {
         TextField("Profile name", text: $profile.name)
           .textFieldStyle(.plain)
@@ -58,8 +56,6 @@ struct ProfileEditorView: View {
           .multilineTextAlignment(.center)
           .frame(width: 260)
       }
-
-      ToolbarSpacer(.fixed, placement: .principal)
 
       ToolbarItem(placement: .principal) {
         ProfileColorPicker(selection: profileColorBinding)

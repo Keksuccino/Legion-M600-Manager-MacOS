@@ -12,6 +12,9 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 21 removes the two explicit fixed toolbar spacers around the profile-name field.
+  Visual inspection confirmed the independent icon and color controls now sit immediately beside
+  the unchanged native name pill with balanced, substantially smaller gaps.
 - Packaged build 20 persists an optional SF Symbol and 24-bit RGB display color per local profile.
   Existing files without those fields decode to the mouse icon and Legion blue. The catalog test
   confirms exactly 50 unique, available Tahoe symbols with five entries in each internal usage
@@ -135,7 +138,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-cce9bde4e29ac782a8546d41fe8efbb2d8391a93b24b5cffd8b3158b8f247ec9  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+4a505267166d9333ee76b8a95330928f61cab0679844cc6a85dba7c664cd1bb8  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-3f6b78b7f456142704c44c1200be4637961a43bb180ff2caaaf360e0518e9023  Legion-M600-Manager-macOS-arm64.zip
+78b5f0b53d0927b635b0f3709bfa560968361ae03789a4b9514ed9320bd29ca0  Legion-M600-Manager-macOS-arm64.zip
 ```
