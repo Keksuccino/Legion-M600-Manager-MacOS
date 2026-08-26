@@ -4,6 +4,9 @@ A native, unofficial macOS configuration app for the **Lenovo Legion M600 Wirele
 
 Lenovo provides its M600 configuration software for Windows only. This project communicates with the mouse directly over USB HID, so macOS users can configure it without Windows or bundled Lenovo software.
 
+<br>
+<img width="700" alt="preview" src="https://github.com/user-attachments/assets/dac1626a-ade5-4641-a53d-d700556cea38" />
+
 ## Install
 
 Requirements: Apple silicon and macOS 26 Tahoe or later.
