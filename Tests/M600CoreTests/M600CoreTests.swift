@@ -404,13 +404,38 @@ final class M600CoreTests: XCTestCase {
       .appendingPathComponent(UUID().uuidString)
       .appendingPathComponent("profiles.json")
     let store = ProfileStore(fileURL: temporary)
-    let profile = M600Profile(name: "Stored")
+    let profile = M600Profile(
+      name: "Stored",
+      iconName: "music.note",
+      profileColor: RGBColor(red: 12, green: 34, blue: 56)
+    )
     try store.save(StoredProfiles(selectedProfileID: profile.id, profiles: [profile]))
     let loaded = try store.load()
     XCTAssertEqual(loaded.selectedProfileID, profile.id)
     XCTAssertEqual(loaded.profiles, [profile])
     XCTAssertEqual(loaded.schemaVersion, StoredProfiles.currentSchemaVersion)
     try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
+  }
+
+  func testProfileWithoutAppearanceFieldsUsesDefaults() throws {
+    let profile = M600Profile(
+      name: "Legacy Appearance",
+      iconName: "music.note",
+      profileColor: RGBColor(red: 12, green: 34, blue: 56)
+    )
+    var object = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: JSONEncoder().encode(profile)) as? [String: Any]
+    )
+    object.removeValue(forKey: "iconName")
+    object.removeValue(forKey: "profileColor")
+
+    let legacyData = try JSONSerialization.data(withJSONObject: object)
+    let decoded = try JSONDecoder().decode(M600Profile.self, from: legacyData)
+
+    XCTAssertNil(decoded.iconName)
+    XCTAssertNil(decoded.profileColor)
+    XCTAssertEqual(decoded.resolvedIconName, M600Profile.defaultIconName)
+    XCTAssertEqual(decoded.resolvedProfileColor, .legionBlue)
   }
 
   func testProfileStorePersistsDedicatedKeyPressIntent() throws {

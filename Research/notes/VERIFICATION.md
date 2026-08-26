@@ -8,10 +8,21 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 31 tests executed, 0 failures.
+- `swift test`: 34 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 20 persists an optional SF Symbol and 24-bit RGB display color per local profile.
+  Existing files without those fields decode to the mouse icon and Legion blue. The catalog test
+  confirms exactly 50 unique, available Tahoe symbols with five entries in each internal usage
+  category; the chooser intentionally renders one unlabeled grid. The separate color control
+  provides 18 presets plus the native Custom Color chooser without a hex readout.
+- The build-20 toolbar keeps the original native profile-name pill unchanged and places the icon
+  and color controls in independent toolbar items outside it. An isolated profile store confirmed
+  an icon selection updates the toolbar and sidebar immediately and survives packaged-app restarts;
+  persistence and RGB conversion are also covered deterministically. The user confirmed the final
+  separated layout and both pickers work. The temporary profile-store hook was removed before the
+  final package was built.
 - Packaged build 19 requires two Clear-button activations within a monotonic three-second window.
   An isolated profile verified the red Sure? state, automatic timeout, empty-area click
   cancellation, preservation after both cancellation paths, and deletion only after the timely
@@ -124,7 +135,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-22fca5abab41d8fcdcffef2774325bc7e7a90925b74959f3ca7dc66d016af08b  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-2249f34a4947edff2b33f8c806b7dbe34cb1c1b497bb0c040914b56b9ec70bdb  Legion-M600-Manager-macOS-arm64.zip
+cce9bde4e29ac782a8546d41fe8efbb2d8391a93b24b5cffd8b3158b8f247ec9  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
+3f6b78b7f456142704c44c1200be4637961a43bb180ff2caaaf360e0518e9023  Legion-M600-Manager-macOS-arm64.zip
 ```

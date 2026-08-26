@@ -1,5 +1,17 @@
 # Milestones
 
+## 2026-08-26 — Custom profile icons and colors
+
+- Added persistent local icon and RGB color metadata to every profile with backward-compatible
+  defaults for existing saved profiles.
+- Preserved the centered profile-name field's original native pill and placed compact, independent
+  icon and color controls outside it; the selected appearance also renders in the sidebar.
+- Presented the 50 symbols as an uncluttered grid and provided a compact 18-color palette plus the
+  native custom-color chooser.
+- Curated 50 Tahoe SF Symbols across ten usage categories and added availability, uniqueness,
+  category-size, color-conversion, persistence, and legacy-decoding coverage.
+- Released the feature as version 0.1.19 (build 20).
+
 ## 2026-08-26 — Timed Clear confirmation
 
 - Changed the macro editor's destructive Clear action into a two-click confirmation: the first

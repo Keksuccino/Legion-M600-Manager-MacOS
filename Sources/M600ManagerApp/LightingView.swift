@@ -1,4 +1,3 @@
-import AppKit
 import M600Core
 import SwiftUI
 
@@ -42,11 +41,11 @@ private struct LightingZoneView: View {
       }
       if zone.effect == .staticColor || zone.effect == .breathing {
         ColorPicker(
-          "Primary color", selection: colorBinding($zone.primaryColor), supportsOpacity: false)
+          "Primary color", selection: $zone.primaryColor.swiftUIColor, supportsOpacity: false)
       }
       if zone.effect == .breathing {
         ColorPicker(
-          "Secondary color", selection: colorBinding($zone.secondaryColor), supportsOpacity: false)
+          "Secondary color", selection: $zone.secondaryColor.swiftUIColor, supportsOpacity: false)
         Text(
           "Black uses Lenovo's single-color breathing mode; another color alternates between both colors."
         )
@@ -54,24 +53,5 @@ private struct LightingZoneView: View {
         .foregroundStyle(.secondary)
       }
     }
-  }
-
-  private func colorBinding(_ rgb: Binding<M600Core.RGBColor>) -> Binding<Color> {
-    Binding(
-      get: {
-        Color(
-          red: Double(rgb.wrappedValue.red) / 255,
-          green: Double(rgb.wrappedValue.green) / 255,
-          blue: Double(rgb.wrappedValue.blue) / 255)
-      },
-      set: { color in
-        guard let converted = NSColor(color).usingColorSpace(.deviceRGB) else { return }
-        rgb.wrappedValue = M600Core.RGBColor(
-          red: UInt8(clamping: Int((converted.redComponent * 255).rounded())),
-          green: UInt8(clamping: Int((converted.greenComponent * 255).rounded())),
-          blue: UInt8(clamping: Int((converted.blueComponent * 255).rounded()))
-        )
-      }
-    )
   }
 }

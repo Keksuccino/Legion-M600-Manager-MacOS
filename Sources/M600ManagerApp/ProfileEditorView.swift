@@ -42,12 +42,29 @@ struct ProfileEditorView: View {
     }
     .toolbar {
       ToolbarItem(placement: .principal) {
+        ProfileIconPicker(
+          selection: profileIconBinding,
+          tint: profile.resolvedProfileColor.swiftUIColor
+        )
+      }
+      .sharedBackgroundVisibility(.hidden)
+
+      ToolbarSpacer(.fixed, placement: .principal)
+
+      ToolbarItem(placement: .principal) {
         TextField("Profile name", text: $profile.name)
           .textFieldStyle(.plain)
           .font(.headline)
           .multilineTextAlignment(.center)
           .frame(width: 260)
       }
+
+      ToolbarSpacer(.fixed, placement: .principal)
+
+      ToolbarItem(placement: .principal) {
+        ProfileColorPicker(selection: profileColorBinding)
+      }
+      .sharedBackgroundVisibility(.hidden)
     }
     .onChange(of: profile) {
       device.clearApplyConfirmation()
@@ -76,6 +93,20 @@ struct ProfileEditorView: View {
     } message: {
       Text("This replaces the configuration stored in the mouse. Your local profiles are kept.")
     }
+  }
+
+  private var profileIconBinding: Binding<String> {
+    Binding(
+      get: { profile.resolvedIconName },
+      set: { profile.iconName = $0 }
+    )
+  }
+
+  private var profileColorBinding: Binding<M600Core.RGBColor> {
+    Binding(
+      get: { profile.resolvedProfileColor },
+      set: { profile.profileColor = $0 }
+    )
   }
 
   @ViewBuilder

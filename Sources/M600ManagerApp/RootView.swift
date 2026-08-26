@@ -9,8 +9,16 @@ struct RootView: View {
       List(selection: $model.selectedProfileID) {
         Section("Local profiles") {
           ForEach(model.profiles) { profile in
-            Label(profile.name, systemImage: "computermouse")
-              .tag(profile.id)
+            Label {
+              Text(profile.name)
+            } icon: {
+              Image(
+                systemName: ProfileIconCatalog.resolvedIconName(profile.resolvedIconName)
+              )
+              .foregroundStyle(profile.resolvedProfileColor.swiftUIColor)
+            }
+            .accessibilityLabel(profile.name)
+            .tag(profile.id)
           }
         }
       }

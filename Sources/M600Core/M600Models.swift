@@ -290,6 +290,8 @@ public struct ButtonBinding: Codable, Hashable, Identifiable, Sendable {
 }
 
 public struct M600Profile: Codable, Hashable, Identifiable, Sendable {
+  public static let defaultIconName = "computermouse"
+
   public var id: UUID
   public var name: String
   public var dpiStages: [DPIStage]
@@ -300,6 +302,10 @@ public struct M600Profile: Codable, Hashable, Identifiable, Sendable {
   public var buttonBindings: [ButtonBinding]
   public var lightingZones: [LightingZone]
   public var rawTemplate: [UInt8]
+  /// Optional so profiles written by older app builds decode without a schema migration.
+  public var iconName: String?
+  /// Optional so profiles written by older app builds decode without a schema migration.
+  public var profileColor: RGBColor?
 
   public init(
     id: UUID = UUID(),
@@ -311,7 +317,9 @@ public struct M600Profile: Codable, Hashable, Identifiable, Sendable {
     pollingRate: PollingRate = .hz1000,
     buttonBindings: [ButtonBinding]? = nil,
     lightingZones: [LightingZone] = [LightingZone(), LightingZone()],
-    rawTemplate: [UInt8] = M600Constants.defaultProfileBytes
+    rawTemplate: [UInt8] = M600Constants.defaultProfileBytes,
+    iconName: String? = nil,
+    profileColor: RGBColor? = nil
   ) {
     self.id = id
     self.name = name
@@ -327,6 +335,16 @@ public struct M600Profile: Codable, Hashable, Identifiable, Sendable {
       }
     self.lightingZones = lightingZones
     self.rawTemplate = rawTemplate
+    self.iconName = iconName
+    self.profileColor = profileColor
+  }
+
+  public var resolvedIconName: String {
+    iconName ?? Self.defaultIconName
+  }
+
+  public var resolvedProfileColor: RGBColor {
+    profileColor ?? .legionBlue
   }
 }
 
