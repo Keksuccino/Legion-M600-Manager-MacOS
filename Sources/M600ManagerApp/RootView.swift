@@ -9,31 +9,25 @@ struct RootView: View {
       List(selection: $model.selectedProfileID) {
         Section("Local profiles") {
           ForEach(model.profiles) { profile in
-            Label {
-              Text(profile.name)
-            } icon: {
-              Image(
-                systemName: ProfileIconCatalog.resolvedIconName(profile.resolvedIconName)
-              )
-              .foregroundStyle(profile.resolvedProfileColor.swiftUIColor)
-            }
-            .accessibilityLabel(profile.name)
+            ProfileSidebarRow(
+              profile: profile,
+              canDelete: model.profiles.count > 1,
+              edit: { model.selectProfile(profile.id) },
+              rename: { model.renameProfile(profile.id, to: $0) },
+              duplicate: { model.duplicateProfile(profile.id) },
+              delete: { model.deleteProfile(profile.id) },
+              setIcon: { model.setProfileIcon(profile.id, to: $0) },
+              setColor: { model.setProfileColor(profile.id, to: $0) }
+            )
             .tag(profile.id)
           }
         }
       }
       .navigationTitle("M600")
       .toolbar {
-        ToolbarItemGroup {
+        ToolbarItem {
           Button(action: model.addProfile) {
             Label("New Profile", systemImage: "plus")
-          }
-          Menu {
-            Button("Duplicate Profile", action: model.duplicateSelectedProfile)
-            Button("Delete Profile", role: .destructive, action: model.deleteSelectedProfile)
-              .disabled(model.profiles.count <= 1)
-          } label: {
-            Label("Profile Actions", systemImage: "ellipsis.circle")
           }
         }
       }

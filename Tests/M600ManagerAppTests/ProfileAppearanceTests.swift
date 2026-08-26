@@ -25,6 +25,12 @@ final class ProfileAppearanceTests: XCTestCase {
     }
   }
 
+  func testColorCatalogContainsEighteenUniquePresets() {
+    XCTAssertEqual(ProfileColorCatalog.options.count, 18)
+    XCTAssertEqual(Set(ProfileColorCatalog.options.map(\.name)).count, 18)
+    XCTAssertEqual(Set(ProfileColorCatalog.options.map(\.color)).count, 18)
+  }
+
   func testRGBColorSwiftUIRoundTrip() throws {
     let original = M600Core.RGBColor(red: 12, green: 128, blue: 244)
     let converted = try XCTUnwrap(M600Core.RGBColor(swiftUIColor: original.swiftUIColor))

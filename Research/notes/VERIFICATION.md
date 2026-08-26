@@ -8,10 +8,19 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 34 tests executed, 0 failures.
+- `swift test`: 37 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 23 gives every local-profile row a native right-click menu with Edit, Rename,
+  Duplicate, Change Icon, Change Color, and Delete. Interactive inspection confirmed the icon and
+  color submenus, enabled custom-color popover, inline Rename field, and removal of the former
+  toolbar actions menu. The app was returned to its unchanged Default profile without activating
+  Delete or Apply.
+- Row-targeted tests confirm that actions affect the profile that opened the menu rather than merely
+  the selected profile. They cover duplication, selection preservation and fallback, last-profile
+  deletion protection, rename, icon/color changes, and persisted results using an inactive test
+  transport that cannot communicate with the connected mouse.
 - Packaged build 22 reduces the centered profile-name field from 260 to 208 points, exactly 20%.
   Visual inspection confirmed the narrower field retains its native appearance, stays centered,
   and keeps balanced spacing to the independent icon and color controls.
@@ -141,7 +150,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-023a06ea0bd6ae131954b70be27a4e236f4e94928543b042f4a455557ca2490c  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+1a97e3e3947954192b475bccbb467a15e8820a4d9770c89edd974e8d572c55e2  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-8144bd29e31ebe5721f2fd1e159afa6934d173bb7cebbe91d65cba157f094fd2  Legion-M600-Manager-macOS-arm64.zip
+b7ee3f837c33b9d47ae0ceaece026569ae293c226fca97166f7a1252e91a5e76  Legion-M600-Manager-macOS-arm64.zip
 ```

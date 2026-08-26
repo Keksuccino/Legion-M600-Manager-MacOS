@@ -8,11 +8,15 @@ final class AppModel: ObservableObject {
   @Published var selectedProfileID: UUID?
   @Published var persistenceError: String?
 
-  let device = M600DeviceController()
+  let device: M600DeviceController
   private let store: ProfileStore
 
-  init(store: ProfileStore = ProfileStore()) {
+  init(
+    store: ProfileStore = ProfileStore(),
+    device: M600DeviceController? = nil
+  ) {
     self.store = store
+    self.device = device ?? M600DeviceController()
     do {
       let stored = try store.load()
       profiles = stored.profiles
@@ -38,8 +42,14 @@ final class AppModel: ObservableObject {
     save()
   }
 
-  func duplicateSelectedProfile() {
-    guard let index = selectedIndex else { return }
+  func selectProfile(_ id: UUID) {
+    guard profiles.contains(where: { $0.id == id }) else { return }
+    selectedProfileID = id
+    save()
+  }
+
+  func duplicateProfile(_ id: UUID) {
+    guard let index = profiles.firstIndex(where: { $0.id == id }) else { return }
     var duplicate = profiles[index]
     duplicate.id = UUID()
     duplicate.name = "\(duplicate.name) Copy"
@@ -48,10 +58,39 @@ final class AppModel: ObservableObject {
     save()
   }
 
-  func deleteSelectedProfile() {
-    guard profiles.count > 1, let index = selectedIndex else { return }
+  func deleteProfile(_ id: UUID) {
+    guard profiles.count > 1,
+      let index = profiles.firstIndex(where: { $0.id == id })
+    else { return }
+
+    let deletedSelectedProfile = selectedProfileID == id
     profiles.remove(at: index)
-    selectedProfileID = profiles[min(index, profiles.count - 1)].id
+    if deletedSelectedProfile {
+      selectedProfileID = profiles[min(index, profiles.count - 1)].id
+    }
+    save()
+  }
+
+  func renameProfile(_ id: UUID, to name: String) {
+    updateProfile(id) { $0.name = name }
+  }
+
+  func setProfileIcon(_ id: UUID, to iconName: String) {
+    updateProfile(id) {
+      $0.iconName = ProfileIconCatalog.resolvedIconName(iconName)
+    }
+  }
+
+  func setProfileColor(_ id: UUID, to color: M600Core.RGBColor) {
+    updateProfile(id) { $0.profileColor = color }
+  }
+
+  private func updateProfile(
+    _ id: UUID,
+    mutation: (inout M600Profile) -> Void
+  ) {
+    guard let index = profiles.firstIndex(where: { $0.id == id }) else { return }
+    mutation(&profiles[index])
     save()
   }
 

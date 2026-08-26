@@ -1,5 +1,14 @@
 # Milestones
 
+## 2026-08-26 — Profile sidebar context menu
+
+- Added row-targeted Edit, Rename, Duplicate, Delete, Change Icon, and Change Color actions to a
+  native right-click menu on every local profile.
+- Added inline sidebar renaming, preserved selection correctly across row-targeted deletion, and
+  kept the last profile protected from deletion.
+- Removed the redundant selected-profile actions drop-down from the toolbar.
+- Released the profile context menu as version 0.1.22 (build 23).
+
 ## 2026-08-26 — Narrower profile-name field
 
 - Reduced the centered profile-name field from 260 to 208 points while preserving its native
