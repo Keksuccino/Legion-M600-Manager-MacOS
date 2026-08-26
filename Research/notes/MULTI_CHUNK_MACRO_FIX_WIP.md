@@ -37,4 +37,5 @@ Date: 2026-08-26
    are covered by a deterministic regression test.
 2. Build 10 applied the unchanged selected profile successfully and the connected mouse confirmed
    the complete write at flash count 686.
-3. Physical execution beyond the first 57-byte boundary awaits the user's Top Button test.
+3. The user pressed the physical Top Button and confirmed that the mouse executed the complete
+   click-plus-`qwertz` macro, including `ertz` from the second programming chunk.

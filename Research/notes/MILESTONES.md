@@ -8,7 +8,8 @@
   `0xFD` macro chunks are spaced 200 ms apart instead of 100 ms.
 - Added exact two-chunk byte and timing coverage, bringing the deterministic suite to 20 tests.
 - Applied the unchanged selected profile with build 10 and received device confirmation at flash
-  count 686. Physical execution of the second chunk awaits user confirmation.
+  count 686. The user then confirmed that the physical Top Button executed the complete
+  click-plus-`qwertz` macro across both chunks.
 
 ## 2026-08-26 — Simplified button rows
 

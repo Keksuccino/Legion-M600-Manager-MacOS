@@ -72,7 +72,8 @@ command was sent by the diagnostic command.
   and completed the final read-only device check at flash count 538.
 - Build 10 applied the unchanged selected profile with the corrected multi-chunk macro pacing and
   reported `Applied profile and lighting · flash #686`. A subsequent read-only CLI query confirmed
-  the same counter. Physical execution of chunk two awaits the user's Top Button test.
+  the same counter. The user then confirmed that pressing the physical Top Button executed the
+  complete click-plus-`qwertz` macro, including the second chunk's `ertz` events.
 - No factory reset, firmware update, or receiver-pairing command was sent.
 
 ## Release hashes
