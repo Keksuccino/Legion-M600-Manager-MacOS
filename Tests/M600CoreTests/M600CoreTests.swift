@@ -16,6 +16,17 @@ final class M600CoreTests: XCTestCase {
     XCTAssertNil(DPITable.sensorIndex(forDPI: 16_100))
   }
 
+  func testRightAndMiddleMappingsMatchRecoveredWindowsLayout() {
+    XCTAssertEqual(M600Button.right.rawValue, 1)
+    XCTAssertEqual(M600Button.right.macroID, 2)
+    XCTAssertEqual(M600Button.middle.rawValue, 2)
+    XCTAssertEqual(M600Button.middle.macroID, 3)
+    XCTAssertEqual(ButtonActionKind.rightClick.deviceBytes, [0xB1, 0, 0, 0, 0])
+    XCTAssertEqual(ButtonActionKind.middleClick.deviceBytes, [0xB2, 0, 0, 0, 0])
+    XCTAssertEqual(MacroMouseButton.right.rawValue, 2)
+    XCTAssertEqual(MacroMouseButton.middle.rawValue, 3)
+  }
+
   func testProfileEncodingPreservesShapeAndHiddenButtons() throws {
     var profile = M600Profile(name: "Mac Profile")
     profile.pollingRate = .hz500
@@ -95,7 +106,7 @@ final class M600CoreTests: XCTestCase {
     )
 
     let encoded = try M600ProfileCodec.encode(profile)
-    XCTAssertEqual(Array(encoded.bytes[42..<47]), [0x91, 0, 0, 0, 0])
+    XCTAssertEqual(Array(encoded.bytes[37..<42]), [0x91, 0, 0, 0, 0])
     XCTAssertEqual(
       Array(encoded.bytes[118..<130]),
       [3, 100, 0, 10, 20, 30, 0, 0, 0, 0, 0, 0]
@@ -184,6 +195,97 @@ final class M600CoreTests: XCTestCase {
     let loaded = try store.load()
     XCTAssertEqual(loaded.selectedProfileID, profile.id)
     XCTAssertEqual(loaded.profiles, [profile])
+    XCTAssertEqual(loaded.schemaVersion, StoredProfiles.currentSchemaVersion)
+    try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
+  }
+
+  func testProfileStoreMigratesLegacyRightAndMiddleButtonOffsets() throws {
+    let temporary = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString)
+      .appendingPathComponent("profiles.json")
+    let store = ProfileStore(fileURL: temporary)
+    var profile = M600Profile(name: "Legacy")
+    let rightIndex = profile.buttonBindings.firstIndex(where: { $0.button == .right })!
+    profile.buttonBindings[rightIndex].action = .volumeDown
+    try store.save(StoredProfiles(selectedProfileID: profile.id, profiles: [profile]))
+
+    var root = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(contentsOf: temporary)) as? [String: Any]
+    )
+    root.removeValue(forKey: "schemaVersion")
+    var profiles = try XCTUnwrap(root["profiles"] as? [[String: Any]])
+    var bindings = try XCTUnwrap(profiles[0]["buttonBindings"] as? [[String: Any]])
+    for index in bindings.indices {
+      if bindings[index]["button"] as? Int == 1 {
+        bindings[index]["button"] = 2
+      } else if bindings[index]["button"] as? Int == 2 {
+        bindings[index]["button"] = 1
+      }
+    }
+    profiles[0]["buttonBindings"] = bindings
+    root["profiles"] = profiles
+    try JSONSerialization.data(withJSONObject: root).write(to: temporary, options: .atomic)
+
+    let migrated = try store.load()
+    let migratedRight = try XCTUnwrap(
+      migrated.profiles[0].buttonBindings.first(where: { $0.button == .right })
+    )
+    let migratedMiddle = try XCTUnwrap(
+      migrated.profiles[0].buttonBindings.first(where: { $0.button == .middle })
+    )
+    XCTAssertEqual(migratedRight.action, .volumeDown)
+    XCTAssertEqual(migratedMiddle.action, .middleClick)
+    XCTAssertEqual(migrated.schemaVersion, StoredProfiles.currentSchemaVersion)
+    try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
+  }
+
+  func testProfileStoreMigratesSchemaTwoMacroMouseButtons() throws {
+    let temporary = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString)
+      .appendingPathComponent("profiles.json")
+    let store = ProfileStore(fileURL: temporary)
+    var profile = M600Profile(name: "Schema 2")
+    let dpiIndex = profile.buttonBindings.firstIndex(where: { $0.button == .dpi })!
+    profile.buttonBindings[dpiIndex].action = .macro
+    profile.buttonBindings[dpiIndex].macro.steps = [
+      .mouseDown(button: .right), .mouseUp(button: .right),
+    ]
+    try store.save(StoredProfiles(selectedProfileID: profile.id, profiles: [profile]))
+
+    var root = try XCTUnwrap(
+      JSONSerialization.jsonObject(with: Data(contentsOf: temporary)) as? [String: Any]
+    )
+    root["schemaVersion"] = 2
+    var profiles = try XCTUnwrap(root["profiles"] as? [[String: Any]])
+    var bindings = try XCTUnwrap(profiles[0]["buttonBindings"] as? [[String: Any]])
+    let storedDPIIndex = try XCTUnwrap(
+      bindings.firstIndex(where: { $0["button"] as? Int == M600Button.dpi.rawValue })
+    )
+    var macro = try XCTUnwrap(bindings[storedDPIIndex]["macro"] as? [String: Any])
+    var steps = try XCTUnwrap(macro["steps"] as? [[String: Any]])
+    for index in steps.indices {
+      for eventName in ["mouseDown", "mouseUp"] {
+        if var event = steps[index][eventName] as? [String: Any] {
+          event["button"] = 3
+          steps[index][eventName] = event
+        }
+      }
+    }
+    macro["steps"] = steps
+    bindings[storedDPIIndex]["macro"] = macro
+    profiles[0]["buttonBindings"] = bindings
+    root["profiles"] = profiles
+    try JSONSerialization.data(withJSONObject: root).write(to: temporary, options: .atomic)
+
+    let migrated = try store.load()
+    let migratedDPI = try XCTUnwrap(
+      migrated.profiles[0].buttonBindings.first(where: { $0.button == .dpi })
+    )
+    XCTAssertEqual(
+      migratedDPI.macro.steps,
+      [.mouseDown(button: .right), .mouseUp(button: .right)]
+    )
+    XCTAssertEqual(migrated.schemaVersion, StoredProfiles.currentSchemaVersion)
     try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
   }
 }

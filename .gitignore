@@ -13,6 +13,7 @@ setup_v*.exe
 Research/windows-payload/
 Research/decompiled-managed/
 Research/notes/native_*_decompiled.c
+Research/local-wip/
 
 # Ghidra's binary database is local WIP state and is not reviewable source.
 Research/ghidra-project/

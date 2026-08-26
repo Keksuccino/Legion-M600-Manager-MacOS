@@ -41,6 +41,11 @@ Key action reports use:
 
 `02 00 <device-offset> <five action bytes> ... <checksum>`
 
+The primary mouse-action bytes are `B0` for left click, `B1` for right click,
+and `B2` for wheel click. Lenovo's managed client expresses those buttons with
+WPF enum values `0`, `2`, and `1`, but its M600 device offsets are `0`, `1`, and
+`2`; the WPF values must not be mistaken for device offsets.
+
 ## Direct reports
 
 Direct packets are zero-padded 64-byte reports without the additive checksum.
@@ -70,7 +75,8 @@ The Windows handler at `0x1800040e0` performs this sequence:
 3. For macro bindings, program the macro body before sending its `0xF2` key action.
 4. Send direct command `0x05` to commit the configuration to onboard flash.
 
-The macOS app follows that ordering and conservative 50–100 ms inter-report delays from the native module.
+The macOS app follows that ordering with the recovered 150 ms profile-chunk and
+100 ms action/commit timing.
 
 ## Macro protocol
 
@@ -79,8 +85,8 @@ A macro key matrix is `F2 <macro-id> 00 00 00`. Profile-zero macro IDs map visib
 | Device offset | Button | Macro ID |
 |---:|---|---:|
 | 0 | Left | 1 |
-| 1 | Wheel click | 2 |
-| 2 | Right | 3 |
+| 1 | Right | 2 |
+| 2 | Wheel click | 3 |
 | 5 | Rear side | 4 |
 | 6 | Front side | 5 |
 | 7 | Right rear | 6 |
@@ -105,6 +111,9 @@ Macro bytecode:
 | `05` | mouse button `1...5` | mouse up |
 | `08` | none | wheel up |
 | `09` | none | wheel down |
+
+Macro mouse-button values are `1` left, `2` right, `3` wheel click, `4` back,
+and `5` forward.
 
 ## 142-byte profile
 

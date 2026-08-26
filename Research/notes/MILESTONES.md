@@ -1,5 +1,18 @@
 # Milestones
 
+## 2026-08-26 — Right-button mapping repair
+
+- A live user test confirmed custom actions worked on the DPI button but not on the row
+  labeled Right click.
+- Traced the mismatch to Lenovo's use of WPF button values: middle is `1` and right is
+  `2`, while the M600 hardware offsets are right `1` and wheel click `2`.
+- Corrected the physical offsets, `B1`/`B2` action meanings, profile-zero macro IDs, and
+  the corresponding right/wheel macro mouse-event bytes.
+- Added schema-versioned migration so existing profiles retain the actions associated with
+  the UI rows the user originally edited.
+- Added deterministic tests for the recovered mapping and a legacy profile with a custom
+  right-button action.
+
 ## 2026-08-26 — Live Apply repair
 
 - Reproduced the failed configuration path and found that the original transport padded

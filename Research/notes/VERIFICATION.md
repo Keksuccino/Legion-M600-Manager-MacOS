@@ -7,7 +7,7 @@ Toolchain: Apple Swift 6.4, Xcode 27 beta
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 12 tests executed, 0 failures.
+- `swift test`: 15 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - `plutil`: packaged `Info.plist` is valid.
@@ -41,6 +41,10 @@ Only query reports `0x0B`, `0x0D`, and `0x0E` were sent. No profile, lighting, b
   zone 1 is the Legion logo.
 - The temporary right-button UI binding test was restored to Right Click before the final
   hardware write.
+- Build 3 applied the corrected right/wheel mapping with the current default actions and
+  advanced the connected mouse's flash counter to 431. A non-default physical right-button
+  action still requires user confirmation because automated UI input cannot press the
+  mouse's physical switch.
 - No factory reset, firmware update, or receiver-pairing command was sent.
 
 ## Release hashes
@@ -48,7 +52,7 @@ Only query reports `0x0B`, `0x0D`, and `0x0E` were sent. No profile, lighting, b
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-c85eb46d5f34119f1d3bc4edfbcfb95be5f8b40214fe5f42714cd819df19be4a  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-589edb20e7ffcc19e89adc253850cd83f1be1e47763f7cf64679d44398f80d93  m600ctl
-15c083a63376dd96a8cf1770f51611b36aee168663bb8f635715014b1af8091e  Legion-M600-Manager-macOS-arm64.zip
+9ec61445503988c27482460a58946e4589abc8ce92f331b14b4ddf74e44a5e2d  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+f2017295ac7916160966694278c9c36bce0eb67f2811133fac501173c4edaa6f  m600ctl
+451ad9db548d1ad052f57cebf08d3b9609f36fea1b9bc3f98fe12df69bf9cdae  Legion-M600-Manager-macOS-arm64.zip
 ```

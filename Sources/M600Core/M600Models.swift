@@ -84,8 +84,8 @@ public struct DPIStage: Codable, Hashable, Sendable {
 
 public enum M600Button: Int, CaseIterable, Codable, Identifiable, Sendable {
   case left = 0
-  case middle = 1
-  case right = 2
+  case middle = 2
+  case right = 1
   case rearSide = 5
   case frontSide = 6
   case rightRear = 7
@@ -110,8 +110,8 @@ public enum M600Button: Int, CaseIterable, Codable, Identifiable, Sendable {
   public var macroID: UInt8 {
     switch self {
     case .left: return 1
-    case .middle: return 2
-    case .right: return 3
+    case .right: return 2
+    case .middle: return 3
     case .rearSide: return 4
     case .frontSide: return 5
     case .rightRear: return 6
@@ -174,8 +174,8 @@ public enum ButtonActionKind: String, CaseIterable, Codable, Identifiable, Senda
     let code: UInt8
     switch self {
     case .leftClick: code = 0xB0
-    case .middleClick: code = 0xB1
-    case .rightClick: code = 0xB2
+    case .rightClick: code = 0xB1
+    case .middleClick: code = 0xB2
     case .forward: code = 0xB3
     case .back: code = 0xB4
     case .dpiCycle: code = 0xC1
@@ -194,8 +194,8 @@ public enum ButtonActionKind: String, CaseIterable, Codable, Identifiable, Senda
 
 public enum MacroMouseButton: UInt8, CaseIterable, Codable, Identifiable, Sendable {
   case left = 1
-  case middle = 2
-  case right = 3
+  case middle = 3
+  case right = 2
   case back = 4
   case forward = 5
 
