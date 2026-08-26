@@ -1,5 +1,12 @@
 # Milestones
 
+## 2026-08-26 — Compact manual macro controls
+
+- Consolidated each Wait, Key, and Button action into a single title, chooser, and Add row.
+- Removed the redundant Duration, Key, and Button field captions plus the Add-button icons.
+- Made the two wheel buttons equal-width and full-row, with matching outer and middle gaps.
+- Released the layout as version 0.1.16 (build 17).
+
 ## 2026-08-26 — Recording card title cleanup
 
 - Removed the redundant Recording heading and icon from the macro editor's recording card.

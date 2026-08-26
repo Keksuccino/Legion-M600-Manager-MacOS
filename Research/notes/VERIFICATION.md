@@ -12,6 +12,9 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 17 presents Wait, Key, and Button as compact single-row controls with plain Add
+  buttons. The equal-width Wheel Up and Wheel Down buttons fill their second row with matching
+  outer and middle gaps; the user visually confirmed the packaged layout.
 - Packaged build 16 removes the redundant Recording heading from the macro editor's recording
   card while preserving its live state row and all capture controls.
 - The packaged build was visually inspected on the Performance screen; the DPI sliders have clean
@@ -112,7 +115,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-bf56ad33ae75b8e7af8335ec73af7e817362ac109cac3b6cdbbb979d24d5b388  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+ebf30b152da6fcd9c38baa01135e222aea4ab3d857649115d31e826891c3afc8  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-aa3c23aa6195a9d6054fb1d2eb8861a42e1ffc0fe2d87474ad157aadbfdfab95  Legion-M600-Manager-macOS-arm64.zip
+d0e6fd476931ddd8b21f4dbfa3f8504b2d7f103bdab6959576fb615a50b85b71  Legion-M600-Manager-macOS-arm64.zip
 ```

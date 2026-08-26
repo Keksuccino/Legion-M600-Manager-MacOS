@@ -182,60 +182,81 @@ struct MacroEditorView: View {
   }
 
   private var delayControls: some View {
-    MacroControlCard(title: "Wait", systemImage: "clock") {
-      Stepper(value: $delayMilliseconds, in: 1...Int(UInt16.max)) {
-        HStack {
-          Text("Duration")
-          Spacer()
+    MacroControlCard {
+      HStack(spacing: 10) {
+        Label("Wait", systemImage: "clock")
+          .font(.headline)
+          .fixedSize()
+        Stepper(value: $delayMilliseconds, in: 1...Int(UInt16.max)) {
           Text("\(delayMilliseconds) ms")
             .monospacedDigit()
             .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .accessibilityLabel("Wait duration")
+        Button("Add") {
+          macro.steps.append(.delay(milliseconds: UInt16(delayMilliseconds)))
+        }
       }
-      Button("Add Wait", systemImage: "plus") {
-        macro.steps.append(.delay(milliseconds: UInt16(delayMilliseconds)))
-      }
-      .frame(maxWidth: .infinity)
     }
     .disabled(recorder.isRecording)
   }
 
   private var keyControls: some View {
-    MacroControlCard(title: "Keyboard", systemImage: "keyboard") {
-      Picker("Key", selection: $selectedKeyUsage) {
-        ForEach(HIDKeyNames.common, id: \.usage) { key in
-          Text(key.name).tag(key.usage)
+    MacroControlCard {
+      HStack(spacing: 10) {
+        Label("Key", systemImage: "keyboard")
+          .font(.headline)
+          .fixedSize()
+        Picker("Key", selection: $selectedKeyUsage) {
+          ForEach(HIDKeyNames.common, id: \.usage) { key in
+            Text(key.name).tag(key.usage)
+          }
+        }
+        .labelsHidden()
+        .frame(maxWidth: .infinity)
+        Button("Add") {
+          macro.steps.append(.keyDown(usage: selectedKeyUsage))
+          macro.steps.append(.keyUp(usage: selectedKeyUsage))
         }
       }
-      Button("Add Key Press", systemImage: "plus") {
-        macro.steps.append(.keyDown(usage: selectedKeyUsage))
-        macro.steps.append(.keyUp(usage: selectedKeyUsage))
-      }
-      .frame(maxWidth: .infinity)
     }
     .disabled(recorder.isRecording)
   }
 
   private var mouseControls: some View {
-    MacroControlCard(title: "Mouse", systemImage: "computermouse") {
-      Picker("Button", selection: $selectedMouseButton) {
-        ForEach(MacroMouseButton.allCases) { button in
-          Text(button.displayName).tag(button)
+    MacroControlCard {
+      HStack(spacing: 10) {
+        Label("Button", systemImage: "computermouse")
+          .font(.headline)
+          .fixedSize()
+        Picker("Button", selection: $selectedMouseButton) {
+          ForEach(MacroMouseButton.allCases) { button in
+            Text(button.displayName).tag(button)
+          }
+        }
+        .labelsHidden()
+        .frame(maxWidth: .infinity)
+        Button("Add") {
+          macro.steps.append(.mouseDown(button: selectedMouseButton))
+          macro.steps.append(.mouseUp(button: selectedMouseButton))
         }
       }
-      Button("Add Click", systemImage: "plus") {
-        macro.steps.append(.mouseDown(button: selectedMouseButton))
-        macro.steps.append(.mouseUp(button: selectedMouseButton))
+      HStack(spacing: 14) {
+        Button {
+          macro.steps.append(.wheelUp)
+        } label: {
+          Label("Wheel Up", systemImage: "arrow.up")
+            .frame(maxWidth: .infinity)
+        }
+        Button {
+          macro.steps.append(.wheelDown)
+        } label: {
+          Label("Wheel Down", systemImage: "arrow.down")
+            .frame(maxWidth: .infinity)
+        }
       }
       .frame(maxWidth: .infinity)
-      HStack {
-        Button("Wheel Up", systemImage: "arrow.up") {
-          macro.steps.append(.wheelUp)
-        }
-        Button("Wheel Down", systemImage: "arrow.down") {
-          macro.steps.append(.wheelDown)
-        }
-      }
     }
     .disabled(recorder.isRecording)
   }
@@ -259,32 +280,14 @@ struct MacroEditorView: View {
 }
 
 private struct MacroControlCard<Content: View>: View {
-  let title: String?
-  let systemImage: String?
   let content: Content
 
-  init(
-    title: String,
-    systemImage: String,
-    @ViewBuilder content: () -> Content
-  ) {
-    self.title = title
-    self.systemImage = systemImage
-    self.content = content()
-  }
-
   init(@ViewBuilder content: () -> Content) {
-    title = nil
-    systemImage = nil
     self.content = content()
   }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      if let title, let systemImage {
-        Label(title, systemImage: systemImage)
-          .font(.headline)
-      }
       content
     }
     .padding(14)
