@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Lighting screen cleanup
+
+- Removed the internal 12-byte lighting-program explanation from the top of the Lighting screen.
+- Kept the actionable stealth-mode warning and both lighting-zone controls unchanged.
+- Released the cleanup as version 0.1.24 (build 25).
+
 ## 2026-08-26 — Unified profile appearance choosers
 
 - Removed the redundant Edit entry from every profile context menu.

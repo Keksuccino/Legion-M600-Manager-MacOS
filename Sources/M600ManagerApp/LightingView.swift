@@ -7,11 +7,6 @@ struct LightingView: View {
 
   var body: some View {
     Form {
-      Section {
-        Text("The M600 stores two independent 12-byte lighting programs in every profile.")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-      }
       if stealthModeActive == true {
         Section {
           Label(

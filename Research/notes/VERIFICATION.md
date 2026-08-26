@@ -12,6 +12,10 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 25 removes the internal 12-byte profile-format note from the Lighting screen.
+  Visual and accessibility inspection confirmed that the screen now begins directly with Zone 1
+  and retains both complete lighting-zone forms. No profile value was edited and Apply was not
+  activated during this check.
 - Packaged build 24 gives every local-profile row a native right-click menu with Rename, Duplicate,
   Change Icon, Change Color, and Delete; the redundant Edit item is absent. Invoking each appearance
   action on a different unselected profile dismissed the context menu, selected the targeted row,
@@ -152,7 +156,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-3adf83dde7ce247d45cadac3c387db62c9ae1e08671899b1c21ae9e209e31918  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+6cfe4ec175df9ee5689122bfc3033adfbe3bf44ca71f6c767c4729adde74f71d  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-3ec0dd7329d6a77f5a82d59885b35759e4386394939ce773832ab37cc5d73855  Legion-M600-Manager-macOS-arm64.zip
+29cd57101e473daf027c0ab8cc22be72c8836a04c2b869c62dfcf8e588b0c13d  Legion-M600-Manager-macOS-arm64.zip
 ```
