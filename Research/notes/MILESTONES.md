@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Tahoe deployment target
+
+- Raised both the SwiftPM and app-bundle minimum deployment target from macOS 14 to macOS 26.
+- Rebuilt the Apple Silicon release with Xcode 27 beta and verified that the app and CLI Mach-O
+  metadata both declare macOS 26 as their minimum supported system.
+
 ## 2026-08-26 — Dedicated RGB activation and verification
 
 - Reproduced a successful full-profile commit whose saved non-Off breathing programs remained

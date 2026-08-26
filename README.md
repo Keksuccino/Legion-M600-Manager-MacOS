@@ -23,8 +23,8 @@ Firmware update and receiver-pairing paths are intentionally not included. They 
 
 Requirements:
 
-- macOS 14 or later
-- Xcode command-line tools (this workspace uses `/Applications/Xcode-beta.app`)
+- macOS 26 Tahoe or later
+- Xcode 26 or later command-line tools (this workspace uses `/Applications/Xcode-beta.app`)
 
 ```sh
 ./Scripts/build-app.sh

@@ -3,6 +3,7 @@
 Date: 2026-08-26
 Host: macOS 27 beta, Apple Silicon
 Toolchain: Apple Swift 6.4, Xcode 27 beta
+Deployment target: macOS 26 Tahoe, Apple Silicon
 
 ## Deterministic checks
 
@@ -10,6 +11,7 @@ Toolchain: Apple Swift 6.4, Xcode 27 beta
 - `swift test`: 18 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
+- App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
 - `plutil`: packaged `Info.plist` is valid.
 - `codesign --verify --deep --strict`: packaged app is valid and satisfies its ad-hoc designated requirement.
 - App executable links only system frameworks/libraries (AppKit, ApplicationServices, IOKit, Foundation, Combine, SwiftUI, and Swift runtime libraries).
@@ -24,7 +26,7 @@ VID:PID: 17EF:60E5
 Configuration interface: connected
 Battery: 100%
 Voltage: 4224 mV
-Flash count: 538
+Flash count: 586
 2.4 GHz link: inactive
 Stealth mode: off
 ```
@@ -66,7 +68,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-488bcc7cccb9ac6b7e743809f2b2059d46434b3b7273931a5786d82bf265a0ba  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-ae7d67837b9ba3149febbd8587bacc44a4d8a9248351b054e20f6d90f5134445  m600ctl
-7c04352d30d809e42b234d545008ae808dd5df24e502070e8177932885eb673a  Legion-M600-Manager-macOS-arm64.zip
+bc679e769dcdadb4fe9a9af188fd2964770d0abfa19189647129f79535162561  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+3fd76b2586c392c0c85a8c79389edaafb739583229dd80566605c14c60bd1b44  m600ctl
+b43d5e511e93cac0bfea6f9c64e8f7226c17ce7ac838c00931a1d5d88ca782c0  Legion-M600-Manager-macOS-arm64.zip
 ```
