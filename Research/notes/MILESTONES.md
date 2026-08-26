@@ -1,5 +1,12 @@
 # Milestones
 
+## 2026-08-26 — Recording card title cleanup
+
+- Removed the redundant Recording heading and icon from the macro editor's recording card.
+- Kept the live Ready/Recording state, event count, permission guidance, and recording controls
+  unchanged.
+- Released the cleanup as version 0.1.15 (build 16).
+
 ## 2026-08-26 — Native grab cursors
 
 - Added one reusable Tahoe pointer modifier that shows an open hand over custom draggable controls

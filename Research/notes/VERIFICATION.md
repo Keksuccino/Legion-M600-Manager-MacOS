@@ -12,6 +12,8 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 16 removes the redundant Recording heading from the macro editor's recording
+  card while preserving its live state row and all capture controls.
 - The packaged build was visually inspected on the Performance screen; the DPI sliders have clean
   tracks without Tahoe's dense stepped tick-mark rows.
 - Packaged build 14 applies Tahoe's native open-hand pointer to all enabled DPI sliders and switches
@@ -110,7 +112,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-af76f3b7bfcd4f204b7ad5c9640bd2efe274bdcab022f433f1b2a1e14f4d7237  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+bf56ad33ae75b8e7af8335ec73af7e817362ac109cac3b6cdbbb979d24d5b388  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-3065d2ae19fec87d2ff706bb80c3d745f3fc5cb647d08258e08dc4eb0b292b38  Legion-M600-Manager-macOS-arm64.zip
+aa3c23aa6195a9d6054fb1d2eb8861a42e1ffc0fe2d87474ad157aadbfdfab95  Legion-M600-Manager-macOS-arm64.zip
 ```

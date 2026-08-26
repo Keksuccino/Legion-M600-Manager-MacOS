@@ -131,7 +131,7 @@ struct MacroEditorView: View {
   }
 
   private var recordingControls: some View {
-    MacroControlCard(title: "Recording", systemImage: "waveform.circle") {
+    MacroControlCard {
       HStack(spacing: 8) {
         Circle()
           .fill(recorder.isRecording ? Color.red : Color.secondary.opacity(0.5))
@@ -259,8 +259,8 @@ struct MacroEditorView: View {
 }
 
 private struct MacroControlCard<Content: View>: View {
-  let title: String
-  let systemImage: String
+  let title: String?
+  let systemImage: String?
   let content: Content
 
   init(
@@ -273,10 +273,18 @@ private struct MacroControlCard<Content: View>: View {
     self.content = content()
   }
 
+  init(@ViewBuilder content: () -> Content) {
+    title = nil
+    systemImage = nil
+    self.content = content()
+  }
+
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-      Label(title, systemImage: systemImage)
-        .font(.headline)
+      if let title, let systemImage {
+        Label(title, systemImage: systemImage)
+          .font(.headline)
+      }
       content
     }
     .padding(14)
