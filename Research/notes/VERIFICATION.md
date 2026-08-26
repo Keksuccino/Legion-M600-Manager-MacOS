@@ -8,10 +8,14 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 27 tests executed, 0 failures.
+- `swift test`: 28 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 18 contains no global event-monitor API, Accessibility trust check,
+  ApplicationServices linkage, or Input Monitoring usage description. Its recorder accepts only
+  local events while the manager is active, with an explicit inactive-manager regression test.
+  Visual inspection confirmed that the permission warning is absent from the packaged macro editor.
 - Packaged build 17 presents Wait, Key, and Button as compact single-row controls with plain Add
   buttons. The equal-width Wheel Up and Wheel Down buttons fill their second row with matching
   outer and middle gaps; the user visually confirmed the packaged layout.
@@ -55,7 +59,8 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
   programming chunks, including Lenovo's recovered inter-chunk timing.
 - `plutil`: packaged `Info.plist` is valid.
 - `codesign --verify --deep --strict`: packaged app is valid and satisfies its ad-hoc designated requirement.
-- App executable links only system frameworks/libraries (AppKit, ApplicationServices, IOKit, Foundation, Combine, SwiftUI, and Swift runtime libraries).
+- App executable links only system frameworks/libraries (AppKit, IOKit, Foundation, Combine,
+  SwiftUI, and Swift runtime libraries).
 
 ## Connected-device read-only check
 
@@ -115,7 +120,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-ebf30b152da6fcd9c38baa01135e222aea4ab3d857649115d31e826891c3afc8  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+ffbab71ac20867212a0cded93e90e2476051a1d05c97b266584f085aeabbd4c0  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-d0e6fd476931ddd8b21f4dbfa3f8504b2d7f103bdab6959576fb615a50b85b71  Legion-M600-Manager-macOS-arm64.zip
+ac889b539da5e76eebbddcebc7460f58c58b8732a099a6483018af311e189ac2  Legion-M600-Manager-macOS-arm64.zip
 ```

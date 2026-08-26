@@ -144,13 +144,6 @@ struct MacroEditorView: View {
           .foregroundStyle(.secondary)
       }
 
-      if let warning = recorder.permissionWarning {
-        Label(warning, systemImage: "exclamationmark.triangle.fill")
-          .font(.caption)
-          .foregroundStyle(.orange)
-          .fixedSize(horizontal: false, vertical: true)
-      }
-
       if recorder.isRecording {
         MacroInputCaptureView(capture: recorder.captureLocalEvent)
         Text(

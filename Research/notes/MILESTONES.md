@@ -1,5 +1,15 @@
 # Milestones
 
+## 2026-08-26 — App-only macro recording
+
+- Removed global event monitoring and the Accessibility trust check so macros can be recorded only
+  while the manager is active, regardless of previously granted privacy permissions.
+- Added an active-app guard for explicitly delivered capture events and regression coverage for the
+  inactive-manager path.
+- Removed the permission warning, Input Monitoring usage description, and ApplicationServices
+  linkage.
+- Released the behavior as version 0.1.17 (build 18).
+
 ## 2026-08-26 — Compact manual macro controls
 
 - Consolidated each Wait, Key, and Button action into a single title, chooser, and Add row.

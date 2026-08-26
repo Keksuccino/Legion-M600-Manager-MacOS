@@ -23,15 +23,16 @@ Target release: 0.1.12 (build 13)
 
 ## Recording architecture
 
-- The global `NSEvent` monitor remains available for recording while another app is active.
-- A local keyboard monitor handles key-down, key-up, and modifier events while the manager is
+- Recording intentionally uses no global event monitor and cannot capture another application's
+  input, regardless of Accessibility or Input Monitoring permission state.
+- A local keyboard monitor handles key-down, key-up, and modifier events only while the manager is
   active. It consumes recorded keys so they cannot invoke Done or another editor shortcut.
 - An explicit in-app mouse capture surface accepts clicks and scrolling. Manager controls sit
   outside that surface, so Start, Stop, Done, Clear, and sidebar clicks cannot become macro events.
 - `MacroRecorder.steps` is observed continuously by the editor and copied to the bound macro on
   every publication. Stop performs one final synchronization as a defensive completion step.
-- Event timestamps come from `NSEvent.timestamp`, preserving physical timing across the local and
-  global capture paths.
+- Event timestamps come from `NSEvent.timestamp`, preserving physical timing within the local
+  capture path.
 
 ## Tahoe accessibility finding
 

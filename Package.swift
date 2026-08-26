@@ -18,10 +18,7 @@ let package = Package(
     .executableTarget(
       name: "M600ManagerApp",
       dependencies: ["M600Core"],
-      linkerSettings: [
-        .linkedFramework("AppKit"),
-        .linkedFramework("ApplicationServices"),
-      ]
+      linkerSettings: [.linkedFramework("AppKit")]
     ),
     .executableTarget(name: "M600CLI", dependencies: ["M600Core"]),
     .testTarget(name: "M600CoreTests", dependencies: ["M600Core"]),

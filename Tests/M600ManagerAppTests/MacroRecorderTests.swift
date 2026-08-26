@@ -8,7 +8,10 @@ import XCTest
 @MainActor
 final class MacroRecorderTests: XCTestCase {
   func testLocalEventsAppendImmediatelyWithRecordedTiming() throws {
-    let recorder = MacroRecorder(installsSystemMonitors: false)
+    let recorder = MacroRecorder(
+      installsLocalKeyboardMonitor: false,
+      isApplicationActive: { true }
+    )
     recorder.start(existingSteps: [.wheelUp])
 
     recorder.captureLocalEvent(
@@ -31,7 +34,10 @@ final class MacroRecorderTests: XCTestCase {
   }
 
   func testClearResetsRecordedTiming() throws {
-    let recorder = MacroRecorder(installsSystemMonitors: false)
+    let recorder = MacroRecorder(
+      installsLocalKeyboardMonitor: false,
+      isApplicationActive: { true }
+    )
     recorder.start(existingSteps: [.wheelDown])
     recorder.captureLocalEvent(
       try XCTUnwrap(mouseEvent(type: .leftMouseDown, timestamp: 10.0))
@@ -46,7 +52,10 @@ final class MacroRecorderTests: XCTestCase {
   }
 
   func testEachKeyboardEventPublishesWhileRecording() throws {
-    let recorder = MacroRecorder(installsSystemMonitors: false)
+    let recorder = MacroRecorder(
+      installsLocalKeyboardMonitor: false,
+      isApplicationActive: { true }
+    )
     var publishedSteps: [[MacroStep]] = []
     let observation = recorder.$steps.dropFirst().sink { publishedSteps.append($0) }
     recorder.start(existingSteps: [])
@@ -68,6 +77,23 @@ final class MacroRecorderTests: XCTestCase {
       ]
     )
     withExtendedLifetime(observation) {}
+  }
+
+  func testEventsAreIgnoredWhileManagerIsInactive() throws {
+    let recorder = MacroRecorder(
+      installsLocalKeyboardMonitor: false,
+      isApplicationActive: { false }
+    )
+    recorder.start(existingSteps: [.wheelUp])
+
+    recorder.captureLocalEvent(
+      try XCTUnwrap(keyEvent(type: .keyDown, timestamp: 20.0, keyCode: 12))
+    )
+    recorder.captureLocalEvent(
+      try XCTUnwrap(mouseEvent(type: .leftMouseDown, timestamp: 20.1))
+    )
+
+    XCTAssertEqual(recorder.steps, [.wheelUp])
   }
 
   private func mouseEvent(type: NSEvent.EventType, timestamp: TimeInterval) -> NSEvent? {

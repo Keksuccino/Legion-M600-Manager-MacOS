@@ -36,7 +36,7 @@ Outputs:
 - `dist/m600ctl`
 - `dist/Legion-M600-Manager-macOS-arm64.zip` (packaged release archive)
 
-The build is ad-hoc signed. Move the app to `/Applications` if desired, then open it normally. Macro recording works while the manager is active without extra permissions. Capturing input while another app is active additionally requires enabling the manager under **System Settings → Privacy & Security → Accessibility** and **Input Monitoring**. Manual macro editing does not need those permissions.
+The build is ad-hoc signed. Move the app to `/Applications` if desired, then open it normally. Macro recording is intentionally limited to the active manager window and needs no Accessibility or Input Monitoring permission.
 
 ## Test
 
