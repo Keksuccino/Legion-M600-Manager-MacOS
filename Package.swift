@@ -25,6 +25,10 @@ let package = Package(
     ),
     .executableTarget(name: "M600CLI", dependencies: ["M600Core"]),
     .testTarget(name: "M600CoreTests", dependencies: ["M600Core"]),
+    .testTarget(
+      name: "M600ManagerAppTests",
+      dependencies: ["M600ManagerApp", "M600Core"]
+    ),
   ],
   swiftLanguageModes: [.v5]
 )

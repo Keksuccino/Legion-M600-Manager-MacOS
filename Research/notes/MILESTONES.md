@@ -1,5 +1,18 @@
 # Milestones
 
+## 2026-08-26 — Professional live macro editor
+
+- Reorganized the macro editor into a full event-sequence workspace plus grouped recording and
+  manual-action controls, and removed the unused macro-name field.
+- Added immediate list synchronization and automatic following while recording.
+- Added a local keyboard monitor and explicit mouse capture surface so recording works inside the
+  active manager without allowing Stop, Done, or other control clicks into the macro.
+- Added red hover feedback plus a pointing-hand cursor to row trash controls.
+- Replaced Tahoe's accessibility-breaking native group containers with reusable custom cards.
+- Added three focused recorder tests, bringing the deterministic suite to 27 passing tests.
+- Visually and interactively verified build 13 in an isolated host without altering saved profiles
+  or applying anything to the connected mouse.
+
 ## 2026-08-26 — Borderless full-size editor
 
 - Replaced SwiftUI's native bordered `TabView` shell with a full-size editor container and a

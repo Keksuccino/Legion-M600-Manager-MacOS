@@ -9,44 +9,81 @@ final class MacroRecorder: ObservableObject {
   @Published private(set) var steps: [MacroStep] = []
   @Published private(set) var permissionWarning: String?
 
-  private var monitor: Any?
+  private var globalMonitor: Any?
+  private var localKeyboardMonitor: Any?
   private var lastEventTime: TimeInterval?
+  private let installsSystemMonitors: Bool
+
+  init(installsSystemMonitors: Bool = true) {
+    self.installsSystemMonitors = installsSystemMonitors
+  }
 
   func start(existingSteps: [MacroStep]) {
     stop()
     steps = existingSteps
     lastEventTime = nil
 
-    let promptKey = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
-    if !AXIsProcessTrustedWithOptions([promptKey: true] as CFDictionary) {
+    guard installsSystemMonitors else {
+      permissionWarning = nil
+      isRecording = true
+      return
+    }
+
+    let canCaptureOtherApps = AXIsProcessTrusted()
+    if !canCaptureOtherApps {
       permissionWarning =
-        "Enable this app in System Settings › Privacy & Security › Accessibility and Input Monitoring to record keyboard events. Manual macro editing still works."
+        "Recording in this window works. Enable Accessibility and Input Monitoring to capture input in other apps."
     } else {
       permissionWarning = nil
     }
 
-    let mask: NSEvent.EventTypeMask = [
+    let globalMask: NSEvent.EventTypeMask = [
       .keyDown, .keyUp, .flagsChanged,
       .leftMouseDown, .leftMouseUp,
       .rightMouseDown, .rightMouseUp,
       .otherMouseDown, .otherMouseUp,
       .scrollWheel,
     ]
-    monitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] event in
-      Task { @MainActor [weak self] in self?.capture(event) }
+    if canCaptureOtherApps {
+      globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: globalMask) { [weak self] event in
+        Task { @MainActor [weak self] in self?.capture(event) }
+      }
     }
-    isRecording = monitor != nil
-    if monitor == nil {
+
+    // Global monitors deliberately exclude this process. Keep a separate local keyboard
+    // monitor so recording works while the manager is active, and swallow those events so
+    // recorded shortcuts cannot trigger editor controls. Mouse input inside the manager is
+    // accepted only by MacroInputCaptureView, preventing Stop/Done clicks from entering a macro.
+    localKeyboardMonitor = NSEvent.addLocalMonitorForEvents(
+      matching: [.keyDown, .keyUp, .flagsChanged]
+    ) { [weak self] event in
+      MainActor.assumeIsolated { self?.capture(event) }
+      return nil
+    }
+
+    isRecording = true
+    if canCaptureOtherApps, globalMonitor == nil {
       permissionWarning =
-        "macOS did not grant an input event monitor. Add steps manually or review Privacy & Security permissions."
+        "Recording in this window is available. To capture input in other apps, review Privacy & Security permissions."
     }
   }
 
   func stop() {
-    if let monitor { NSEvent.removeMonitor(monitor) }
-    monitor = nil
+    if let globalMonitor { NSEvent.removeMonitor(globalMonitor) }
+    if let localKeyboardMonitor { NSEvent.removeMonitor(localKeyboardMonitor) }
+    globalMonitor = nil
+    localKeyboardMonitor = nil
     isRecording = false
     lastEventTime = nil
+  }
+
+  func clear() {
+    steps.removeAll()
+    lastEventTime = nil
+  }
+
+  func captureLocalEvent(_ event: NSEvent) {
+    capture(event)
   }
 
   private func capture(_ event: NSEvent) {
@@ -75,7 +112,7 @@ final class MacroRecorder: ObservableObject {
     }
     guard let step else { return }
 
-    let now = ProcessInfo.processInfo.systemUptime
+    let now = event.timestamp
     if let lastEventTime {
       appendDelay(milliseconds: Int((now - lastEventTime) * 1_000))
     }

@@ -8,7 +8,7 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 24 tests executed, 0 failures.
+- `swift test`: 27 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
@@ -26,6 +26,14 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
   inspection confirmed that the old horizontal gaps and asymmetric outer border are gone while the
   centered segmented selector remains. Performance, Buttons, Lighting, and Device all opened
   successfully, and the app was left on Buttons.
+- Packaged build 13 presents the macro editor as a clear event-sequence pane with grouped recording,
+  wait, keyboard, and mouse controls. The unused macro-name field is absent, row delete controls
+  have red hover and pointing-hand feedback, and the full view passes macOS accessibility
+  inspection after replacing Tahoe's problematic native group containers.
+- In an isolated packaged-app host, starting a recording and pressing `Q` while the manager stayed
+  active immediately added Q down and Q up rows. Clicking the dedicated mouse surface immediately
+  added a wait plus left-button down/up rows; clicking Stop added nothing. This interactive check
+  neither loaded nor changed the user's saved profiles and did not apply a profile to the mouse.
 - Exact codec coverage confirms that a dedicated `Press A` action programs the macro matrix and a
   34-byte body: Lenovo's 30-byte prefix followed by A down (`02 04`) and A up (`03 04`). A separate
   two-step user macro remains explicitly classified as `Macro`.
@@ -45,7 +53,7 @@ VID:PID: 17EF:60E5
 Configuration interface: connected
 Battery: 100%
 Voltage: 4224 mV
-Flash count: 707
+Flash count: 798
 2.4 GHz link: inactive
 Stealth mode: off
 ```
@@ -93,7 +101,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-72051b0f3091790dd0ccb58576701565eab49a19230bbcefacdcf9b07913171b  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+0f31a46577fbd687bd2b539ecb99cdc87b97e9638c841ef08ccab6542315d839  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-96456f691a67e35eacb95d814a5c0193941c19366b81fb1e489fe7b040724a8e  Legion-M600-Manager-macOS-arm64.zip
+7774111b6838fe17c3a53f958921fcee8efdffb0e8850af87f3fc2cb1a00a43f  Legion-M600-Manager-macOS-arm64.zip
 ```
