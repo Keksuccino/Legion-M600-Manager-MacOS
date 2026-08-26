@@ -42,6 +42,7 @@ public struct EncodedM600Profile: Equatable, Sendable {
   public let bytes: [UInt8]
   public let keyMatrices: [[UInt8]]
   public let macrosByDeviceOffset: [Int: [UInt8]]
+  public let lightingData: [UInt8]
 }
 
 public enum M600ProfileCodec {
@@ -147,7 +148,12 @@ public enum M600ProfileCodec {
       result.replaceSubrange(offset..<(offset + 12), with: lightingBytes(zone))
     }
 
-    return EncodedM600Profile(bytes: result, keyMatrices: matrices, macrosByDeviceOffset: macros)
+    return EncodedM600Profile(
+      bytes: result,
+      keyMatrices: matrices,
+      macrosByDeviceOffset: macros,
+      lightingData: Array(result[lightingOffset..<(lightingOffset + 24)])
+    )
   }
 
   public static func encodeMacroBody(_ steps: [MacroStep]) -> [UInt8] {

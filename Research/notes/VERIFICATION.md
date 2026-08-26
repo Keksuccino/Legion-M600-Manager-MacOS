@@ -7,7 +7,7 @@ Toolchain: Apple Swift 6.4, Xcode 27 beta
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 15 tests executed, 0 failures.
+- `swift test`: 18 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - `plutil`: packaged `Info.plist` is valid.
@@ -24,11 +24,14 @@ VID:PID: 17EF:60E5
 Configuration interface: connected
 Battery: 100%
 Voltage: 4224 mV
-Flash count: 73
+Flash count: 538
 2.4 GHz link: inactive
+Stealth mode: off
 ```
 
-Only query reports `0x0B`, `0x0D`, and `0x0E` were sent. No profile, lighting, button, DPI, polling, reset, pairing, or firmware command was sent during this check.
+Only query reports `0x0A`, `0x0B`, `0x0D`, and `0x0E` were sent during this final
+read-only check. No profile, lighting, button, DPI, polling, reset, pairing, or firmware
+command was sent by the diagnostic command.
 
 ## Connected-device Apply check
 
@@ -45,6 +48,17 @@ Only query reports `0x0B`, `0x0D`, and `0x0E` were sent. No profile, lighting, b
   advanced the connected mouse's flash counter to 431. A non-default physical right-button
   action still requires user confirmation because automated UI input cannot press the
   mouse's physical switch.
+- Build 4 queried hardware stealth state as off, then restored Lenovo's standalone `0x25`
+  lighting activation after the verified full-profile commit.
+- A first build-4 application advanced the counter from 506 to 522. The build containing the
+  finalized write sequence, with a pre-commit query that isolates `0x05`, advanced it from
+  522 to 538.
+  Each 16-count change is exactly 14 staged profile/button reports, one accepted commit,
+  and one accepted lighting report.
+- The live application reported `Applied profile and lighting · flash #538` for the unchanged
+  selected breathing profile.
+- The packaged build then added serialization between status reads and mutations, was restarted,
+  and completed the final read-only device check at flash count 538.
 - No factory reset, firmware update, or receiver-pairing command was sent.
 
 ## Release hashes
@@ -52,7 +66,7 @@ Only query reports `0x0B`, `0x0D`, and `0x0E` were sent. No profile, lighting, b
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-9ec61445503988c27482460a58946e4589abc8ce92f331b14b4ddf74e44a5e2d  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-f2017295ac7916160966694278c9c36bce0eb67f2811133fac501173c4edaa6f  m600ctl
-451ad9db548d1ad052f57cebf08d3b9609f36fea1b9bc3f98fe12df69bf9cdae  Legion-M600-Manager-macOS-arm64.zip
+488bcc7cccb9ac6b7e743809f2b2059d46434b3b7273931a5786d82bf265a0ba  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+ae7d67837b9ba3149febbd8587bacc44a4d8a9248351b054e20f6d90f5134445  m600ctl
+7c04352d30d809e42b234d545008ae808dd5df24e502070e8177932885eb673a  Legion-M600-Manager-macOS-arm64.zip
 ```

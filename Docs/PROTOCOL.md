@@ -76,7 +76,11 @@ The Windows handler at `0x1800040e0` performs this sequence:
 4. Send direct command `0x05` to commit the configuration to onboard flash.
 
 The macOS app follows that ordering with the recovered 150 ms profile-chunk and
-100 ms action/commit timing.
+100 ms action/commit timing. It queries `0x0D` after staging and again after `0x05`,
+so a counter change caused by earlier profile packets cannot conceal a rejected commit.
+After the verified commit, it sends the profile's 24 lighting bytes with checksummed
+command `0x25`, waits 150 ms, and verifies one more fresh counter change. This matches
+the Windows UI's dedicated lighting path and activates the stored programs immediately.
 
 ## Macro protocol
 
@@ -143,6 +147,9 @@ Each lighting zone is 12 bytes:
 - Zone 0 controls the scroll wheel.
 - Zone 1 controls the Legion logo.
 
+The standalone activation packet is one normal chunk: `25 00 01 01 18`, followed by
+the two records and zero padding, with the additive checksum in byte 63.
+
 - Static: `03 64 00 R G B 00 00 00 00 00 00`
 - Breathing: `02 64 00 02 <mode> 00 R G B R2 G2 B2`, mode 1 for a black alternate and 3 for two colors
 - Rainbow: `01 64 00 0A 00 00 00 00 00 00 00 00`
@@ -154,14 +161,14 @@ Each lighting zone is 12 bytes:
 The native parser handles the command in byte 0:
 
 - `0x04`: DPI changed; stage is byte 3, sensor indices bytes 4 and 5
-- `0x0A`: stealth event
+- `0x0A`: hardware stealth/light-off state in byte 2 (`0` off, nonzero on)
 - `0x0B`: voltage is little-endian bytes 2–3; raw battery percentage is byte 4
 - `0x0D`: 24-bit little-endian flash counter in bytes 2–4
 - `0x0E`: 2.4 GHz connection state in byte 2
 
 ## Confidence and safety boundary
 
-- **Live verified:** macOS discovery of the usage-0 interface; read-only `0x0B`, `0x0D`, and `0x0E` exchanges; full profile writes; the short `0x05` commit; and both lighting-zone identities.
+- **Live verified:** macOS discovery of the usage-0 interface; read-only `0x0A`, `0x0B`, `0x0D`, and `0x0E` exchanges; staged full-profile writes; the short `0x05` commit; standalone `0x25` lighting activation; and both lighting-zone identities.
 - **Cross-checked and unit tested:** profile layout, DPI table, checksum/chunk framing, action encodings, lighting programs, macro bytecode and transfer framing, response parsing.
 - **Not exercised during development:** factory reset.
 - **Out of scope by design:** firmware update and receiver pairing.

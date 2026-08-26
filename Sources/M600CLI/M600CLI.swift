@@ -6,7 +6,7 @@ struct M600CLI {
   @MainActor
   static func main() async {
     let command = CommandLine.arguments.dropFirst().first ?? "info"
-    guard ["info", "battery", "flash-count", "help"].contains(command) else {
+    guard ["info", "battery", "flash-count", "stealth", "help"].contains(command) else {
       print("Unknown command: \(command)\n")
       usage()
       exit(2)
@@ -47,6 +47,13 @@ struct M600CLI {
         fputs("No flash-counter response received.\n", stderr)
         exit(1)
       }
+    case "stealth":
+      if let enabled = controller.stealthModeActive {
+        print(enabled ? "on" : "off")
+      } else {
+        fputs("No stealth-mode response received.\n", stderr)
+        exit(1)
+      }
     default:
       print("Device: \(controller.productName)")
       print("VID:PID: 17EF:60E5")
@@ -57,13 +64,16 @@ struct M600CLI {
       print(
         "2.4 GHz link: \(controller.wirelessConnectionActive.map { $0 ? "active" : "inactive" } ?? "no response")"
       )
+      print(
+        "Stealth mode: \(controller.stealthModeActive.map { $0 ? "on (lighting suppressed)" : "off" } ?? "no response")"
+      )
     }
   }
 
   private static func usage() {
     print(
       """
-      Usage: m600ctl [info|battery|flash-count|help]
+      Usage: m600ctl [info|battery|flash-count|stealth|help]
 
       Read-only diagnostics for a connected Lenovo Legion M600.
       Profile writes are intentionally available only through the macOS app.

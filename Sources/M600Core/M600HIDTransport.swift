@@ -31,7 +31,17 @@ public enum M600TransportError: LocalizedError {
 }
 
 @MainActor
-public final class M600HIDTransport {
+public protocol M600ReportTransport: AnyObject {
+  var onConnectionChange: ((Bool, String?) -> Void)? { get set }
+  var onInputReport: ((M600InputReport) -> Void)? { get set }
+  var onError: ((Error) -> Void)? { get set }
+
+  func start() throws
+  func send(_ report: M600OutputReport) throws
+}
+
+@MainActor
+public final class M600HIDTransport: M600ReportTransport {
   public private(set) var isConnected = false
   public private(set) var productName: String?
   public var onConnectionChange: ((Bool, String?) -> Void)?

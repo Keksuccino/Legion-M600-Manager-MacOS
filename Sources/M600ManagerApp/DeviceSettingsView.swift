@@ -32,6 +32,14 @@ struct DeviceSettingsView: View {
             Text("—")
           }
         }
+        LabeledContent("Hardware stealth mode") {
+          if let active = device.stealthModeActive {
+            Text(active ? "On · lighting suppressed" : "Off")
+              .foregroundStyle(active ? .orange : .primary)
+          } else {
+            Text("—")
+          }
+        }
         Button("Refresh Status") { Task { await device.refreshReadOnlyStatus() } }
           .disabled(!device.isConnected || device.isBusy)
       }

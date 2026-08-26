@@ -13,7 +13,7 @@ The project was built by extracting Lenovo Legion Accessory Central 2.0.9.10231,
 - Media commands and DPI cycling
 - Macro editing and recording with delays, keyboard, mouse buttons, and wheel events
 - Two independent RGB zones with Static, Breathing, Rainbow, Random, and Off effects
-- Battery, voltage, 2.4 GHz link, and onboard flash-counter diagnostics
+- Battery, voltage, 2.4 GHz link, hardware stealth mode, and onboard flash-counter diagnostics
 - Onboard profile persistence and a confirmation-gated factory-reset flow
 - A read-only `m600ctl` diagnostic command
 
@@ -58,6 +58,6 @@ The CLI is deliberately query-only. Configuration changes require the explicit *
 
 ## Status and caveats
 
-Read-only communication and full profile writes were verified against a connected M600 (VID `17EF`, PID `60E5`). The live lighting check also confirmed the scroll-wheel and Legion-logo zone identities. Encoding and write sequences are covered by unit tests against the recovered Windows implementation. The project never writes settings automatically during startup.
+Read-only communication, independently confirmed profile commits, and dedicated lighting activation were verified against a connected M600 (VID `17EF`, PID `60E5`). The live lighting check also confirmed the scroll-wheel and Legion-logo zone identities. Encoding, write ordering, and rejection paths are covered by unit tests against the recovered Windows implementation. The project never writes settings automatically during startup.
 
 This is an independent project and is not affiliated with or endorsed by Lenovo.

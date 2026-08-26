@@ -9,7 +9,7 @@ public enum M600ConnectionMode: String, Codable, Sendable {
 
 public enum M600InputReport: Equatable, Sendable {
   case dpiChanged(profile: UInt8, stage: UInt8, xSensorIndex: UInt8, ySensorIndex: UInt8)
-  case stealth(profile: UInt8)
+  case stealth(enabled: Bool)
   case battery(voltageMillivolts: UInt16, rawPercentage: UInt8)
   case flashCount(UInt32)
   case wirelessConnection(Bool)
@@ -40,7 +40,7 @@ public enum M600InputReportParser {
         ySensorIndex: bytes[5]
       )
     case 0x0A where bytes.count >= 3:
-      return .stealth(profile: bytes[2])
+      return .stealth(enabled: bytes[2] != 0)
     case 0x0B where bytes.count >= 5:
       let voltage = UInt16(bytes[2]) | (UInt16(bytes[3]) << 8)
       return .battery(voltageMillivolts: voltage, rawPercentage: bytes[4])

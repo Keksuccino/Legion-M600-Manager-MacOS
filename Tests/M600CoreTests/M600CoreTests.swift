@@ -115,6 +115,11 @@ final class M600CoreTests: XCTestCase {
       Array(encoded.bytes[130..<142]),
       [2, 100, 0, 2, 3, 0, 40, 50, 60, 70, 80, 90]
     )
+    XCTAssertEqual(encoded.lightingData, Array(encoded.bytes[118..<142]))
+    let lightingReport = M600PacketBuilder.lightingUpdate(data: encoded.lightingData)
+    XCTAssertEqual(Array(lightingReport.bytes[0..<5]), [0x25, 0, 1, 1, 24])
+    XCTAssertEqual(Array(lightingReport.bytes[5..<29]), encoded.lightingData)
+    XCTAssertEqual(lightingReport.bytes[63], lightingReport.bytes[0..<63].reduce(0, &+))
   }
 
   func testProfileChunksAndChecksum() {
@@ -139,6 +144,67 @@ final class M600CoreTests: XCTestCase {
     XCTAssertEqual(Array(M600PacketBuilder.stealthQuery.transferredBytes), [0x0A, 0, 0])
     XCTAssertEqual(M600PacketBuilder.factoryRestoreBegin.transferLength, 64)
     XCTAssertEqual(M600PacketBuilder.factoryRestoreConfirm.transferLength, 64)
+  }
+
+  @MainActor
+  func testApplyVerifiesProfileBeforeActivatingAndVerifyingLighting() async throws {
+    let transport = RecordingTransport(flashCount: 500)
+    let controller = M600DeviceController(transport: transport, wait: { _ in })
+    transport.connect()
+    for _ in 0..<5 { await Task.yield() }
+    transport.sentReports.removeAll()
+
+    await controller.apply(M600Profile())
+
+    XCTAssertNil(controller.lastError)
+    XCTAssertEqual(controller.flashCount, 516)
+    XCTAssertEqual(controller.lastSuccess, "Applied profile and lighting · flash #516")
+    XCTAssertEqual(
+      transport.sentReports.map { $0.bytes[0] },
+      [1, 1, 1] + Array(repeating: 2, count: 11) + [13, 5, 13, 37, 13]
+    )
+  }
+
+  @MainActor
+  func testApplyRejectsAnUnconfirmedCommitBeforeSendingLighting() async throws {
+    let transport = RecordingTransport(flashCount: 700, ignoredWriteCommands: [0x05])
+    let controller = M600DeviceController(transport: transport, wait: { _ in })
+    transport.connect()
+    for _ in 0..<5 { await Task.yield() }
+    transport.sentReports.removeAll()
+
+    await controller.apply(M600Profile())
+
+    XCTAssertNil(controller.lastSuccess)
+    XCTAssertEqual(
+      controller.lastError,
+      "The mouse answered, but its onboard flash counter remained at 714 (previously 714). The profile was not committed."
+    )
+    XCTAssertEqual(
+      transport.sentReports.map { $0.bytes[0] },
+      [1, 1, 1] + Array(repeating: 2, count: 11) + [13, 5, 13]
+    )
+  }
+
+  @MainActor
+  func testApplyReportsAnUnconfirmedLightingUpdate() async throws {
+    let transport = RecordingTransport(flashCount: 900, ignoredWriteCommands: [0x25])
+    let controller = M600DeviceController(transport: transport, wait: { _ in })
+    transport.connect()
+    for _ in 0..<5 { await Task.yield() }
+    transport.sentReports.removeAll()
+
+    await controller.apply(M600Profile())
+
+    XCTAssertNil(controller.lastSuccess)
+    XCTAssertEqual(
+      controller.lastError,
+      "The profile was committed, but the mouse did not accept the lighting update (flash counter remained at 915, previously 915)."
+    )
+    XCTAssertEqual(
+      transport.sentReports.map { $0.bytes[0] },
+      [1, 1, 1] + Array(repeating: 2, count: 11) + [13, 5, 13, 37, 13]
+    )
   }
 
   func testMacroEncodingAndProgrammingPackets() throws {
@@ -171,6 +237,8 @@ final class M600CoreTests: XCTestCase {
   }
 
   func testInputReportParsing() {
+    XCTAssertEqual(M600InputReportParser.parse([0x0A, 0, 1]), .stealth(enabled: true))
+    XCTAssertEqual(M600InputReportParser.parse([0x0A, 1, 0]), .stealth(enabled: false))
     XCTAssertEqual(
       M600InputReportParser.parse([0x0B, 0, 0x34, 0x12, 87]),
       .battery(voltageMillivolts: 0x1234, rawPercentage: 87)
@@ -287,5 +355,47 @@ final class M600CoreTests: XCTestCase {
     )
     XCTAssertEqual(migrated.schemaVersion, StoredProfiles.currentSchemaVersion)
     try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
+  }
+}
+
+@MainActor
+private final class RecordingTransport: M600ReportTransport {
+  var onConnectionChange: ((Bool, String?) -> Void)?
+  var onInputReport: ((M600InputReport) -> Void)?
+  var onError: ((Error) -> Void)?
+  var sentReports: [M600OutputReport] = []
+
+  private var flashCount: UInt32
+  private let ignoredWriteCommands: Set<UInt8>
+
+  init(flashCount: UInt32, ignoredWriteCommands: Set<UInt8> = []) {
+    self.flashCount = flashCount
+    self.ignoredWriteCommands = ignoredWriteCommands
+  }
+
+  func start() throws {}
+
+  func connect() {
+    onConnectionChange?(true, "Test M600")
+  }
+
+  func send(_ report: M600OutputReport) throws {
+    sentReports.append(report)
+    switch report.bytes[0] {
+    case let command
+    where [UInt8(0x01), 0x02, 0x05, 0x25].contains(command)
+      && !ignoredWriteCommands.contains(command):
+      flashCount += 1
+    case 0x0A:
+      onInputReport?(.stealth(enabled: false))
+    case 0x0B:
+      onInputReport?(.battery(voltageMillivolts: 4_200, rawPercentage: 100))
+    case 0x0D:
+      onInputReport?(.flashCount(flashCount))
+    case 0x0E:
+      onInputReport?(.wirelessConnection(false))
+    default:
+      break
+    }
   }
 }

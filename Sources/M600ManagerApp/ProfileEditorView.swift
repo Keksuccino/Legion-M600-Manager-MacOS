@@ -30,7 +30,7 @@ struct ProfileEditorView: View {
         ButtonAssignmentsView(bindings: $profile.buttonBindings)
           .tabItem { Label("Buttons", systemImage: "button.programmable") }
           .tag(EditorTab.buttons)
-        LightingView(zones: $profile.lightingZones)
+        LightingView(zones: $profile.lightingZones, stealthModeActive: device.stealthModeActive)
           .tabItem { Label("Lighting", systemImage: "lightbulb.led") }
           .tag(EditorTab.lighting)
         DeviceSettingsView(

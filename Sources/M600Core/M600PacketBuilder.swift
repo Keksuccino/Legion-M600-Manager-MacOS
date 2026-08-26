@@ -53,6 +53,13 @@ public enum M600PacketBuilder {
     return checksummed([0x02, 0, UInt8(deviceOffset)] + matrix)
   }
 
+  public static func lightingUpdate(data: [UInt8]) -> M600OutputReport {
+    precondition(data.count == 24)
+    // Lenovo's lighting handler uses the general checksummed chunk sender even
+    // though both 12-byte zone programs fit in one report.
+    return chunks(command: 0x25, data: data)[0]
+  }
+
   public static func macroProgrammingSteps(macroID: UInt8, body: [UInt8], deviceOffset: Int)
     -> [DeviceWriteStep]
   {

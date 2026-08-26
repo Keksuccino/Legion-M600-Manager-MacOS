@@ -4,6 +4,7 @@ import SwiftUI
 
 struct LightingView: View {
   @Binding var zones: [LightingZone]
+  let stealthModeActive: Bool?
 
   var body: some View {
     Form {
@@ -11,6 +12,15 @@ struct LightingView: View {
         Text("The M600 stores two independent 12-byte lighting programs in every profile.")
           .font(.caption)
           .foregroundStyle(.secondary)
+      }
+      if stealthModeActive == true {
+        Section {
+          Label(
+            "The mouse's hardware stealth mode is on, so both LEDs stay off even when a lighting profile is applied. Press the dedicated light/stealth button on the mouse to turn lighting back on.",
+            systemImage: "lightbulb.slash.fill"
+          )
+          .foregroundStyle(.orange)
+        }
       }
       LightingZoneView(name: "Zone 1 · Scroll wheel", zone: $zones[0])
       LightingZoneView(name: "Zone 2 · Legion logo", zone: $zones[1])

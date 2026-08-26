@@ -1,5 +1,22 @@
 # Milestones
 
+## 2026-08-26 — Dedicated RGB activation and verification
+
+- Reproduced a successful full-profile commit whose saved non-Off breathing programs remained
+  dark; the connected mouse reached flash count 506.
+- Queried the independent hardware stealth state and confirmed it was off.
+- Restored Lenovo's dedicated checksummed `0x25` lighting packet after the full profile commit.
+- Split verification into staged profile, `0x05` commit, and `0x25` lighting phases so one phase's
+  flash-counter change cannot mask rejection of a later phase.
+- Serialized status refreshes with mutations so read-only queries cannot interleave with the
+  device's timing-sensitive profile sequence.
+- Added hardware stealth status to the app and read-only CLI, including a visible explanation when
+  stealth mode suppresses otherwise valid RGB settings.
+- Added deterministic transport-sequence and rejection-path tests, bringing coverage to 18 tests.
+- Live-applied the finalized write sequence: flash count advanced from 522 to 538 and the app
+  confirmed both profile and lighting application. The final packaged build was then restarted
+  and read-only verified after adding the status/write serialization guard.
+
 ## 2026-08-26 — Right-button mapping repair
 
 - A live user test confirmed custom actions worked on the DPI button but not on the row
