@@ -10,6 +10,8 @@
     <string>M600 Manager</string>
     <key>CFBundleIdentifier</key>
     <string>dev.timsc.LegionM600Manager</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon.icns</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -17,9 +19,9 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1.24</string>
+    <string>0.1.25</string>
     <key>CFBundleVersion</key>
-    <string>25</string>
+    <string>26</string>
     <key>LSMinimumSystemVersion</key>
     <string>26.0</string>
     <key>NSHumanReadableCopyright</key>

@@ -19,8 +19,12 @@ HASH_PATH="$PROJECT_DIR/dist/SHA256SUMS"
 mkdir -p "$CONTENTS_DIR/MacOS" "$CONTENTS_DIR/Resources" "$PROJECT_DIR/dist"
 cp "$BIN_DIR/M600 Manager" "$CONTENTS_DIR/MacOS/M600 Manager"
 cp "$PROJECT_DIR/Resources/Info.plist" "$CONTENTS_DIR/Info.plist"
+cp "$PROJECT_DIR/Resources/AppIcon.icns" "$CONTENTS_DIR/Resources/AppIcon.icns"
 cp "$BIN_DIR/m600ctl" "$PROJECT_DIR/dist/m600ctl"
 codesign --force --deep --sign - "$APP_DIR"
+# Finder caches bundle icons against the package directory metadata. Refresh the root timestamp
+# after replacing resources inside an existing app so local rebuilds show a new icon immediately.
+touch "$APP_DIR"
 rm -f "$ZIP_PATH"
 ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$ZIP_PATH"
 

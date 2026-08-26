@@ -12,6 +12,12 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 26 declares `AppIcon.icns` through `CFBundleIconFile` and includes a byte-identical
+  copy in `Contents/Resources`. The reproducible generator preserves the supplied artwork's aspect
+  ratio on a transparent square master and emits all ten standard 16–1024px macOS iconset files.
+  `iconutil` round-trip inspection, AppKit bundle-icon resolution, and Finder icon view all showed
+  the pink mouse artwork; the user also confirmed the icon works. The build now refreshes the app
+  bundle's root timestamp after replacing resources so Finder does not retain its old icon cache.
 - Packaged build 25 removes the internal 12-byte profile-format note from the Lighting screen.
   Visual and accessibility inspection confirmed that the screen now begins directly with Zone 1
   and retains both complete lighting-zone forms. No profile value was edited and Apply was not
@@ -156,7 +162,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-6cfe4ec175df9ee5689122bfc3033adfbe3bf44ca71f6c767c4729adde74f71d  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+36576ff287a3227c2fc7f3c928d502a504e214a2ea4ea733f8833e02999b6b1b  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-29cd57101e473daf027c0ab8cc22be72c8836a04c2b869c62dfcf8e588b0c13d  Legion-M600-Manager-macOS-arm64.zip
+be34271bbea97c0c2b8eb4a64cf91dca5dba7bd5e728158fd552239c3aef5b76  Legion-M600-Manager-macOS-arm64.zip
 ```

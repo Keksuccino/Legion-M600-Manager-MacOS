@@ -1,5 +1,13 @@
 # Milestones
 
+## 2026-08-26 — Custom application icon
+
+- Adopted the supplied pink mouse artwork as the application icon.
+- Added a reproducible asset script that preserves the source aspect ratio, creates a transparent
+  square 1024px master, and generates every standard macOS icon representation in one `.icns`.
+- Declared and packaged the icon as an explicit bundle resource.
+- Released the icon as version 0.1.25 (build 26).
+
 ## 2026-08-26 — Lighting screen cleanup
 
 - Removed the internal 12-byte lighting-program explanation from the top of the Lighting screen.
