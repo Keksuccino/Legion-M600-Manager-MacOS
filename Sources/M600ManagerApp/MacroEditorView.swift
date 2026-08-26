@@ -1,4 +1,3 @@
-import AppKit
 import M600Core
 import SwiftUI
 
@@ -334,19 +333,13 @@ private struct MacroDeleteButton: View {
     .buttonStyle(.plain)
     .disabled(disabled)
     .help(disabled ? "Stop recording before removing events" : "Remove event")
+    .pointerStyle(disabled ? nil : .link)
     .onHover { hovering in
       isHovering = hovering
-      if !disabled {
-        (hovering ? NSCursor.pointingHand : NSCursor.arrow).set()
-      }
-    }
-    .onDisappear {
-      if isHovering { NSCursor.arrow.set() }
     }
     .onChange(of: disabled) {
       guard disabled, isHovering else { return }
       isHovering = false
-      NSCursor.arrow.set()
     }
     .accessibilityLabel("Remove event from macro")
   }

@@ -14,6 +14,11 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
 - The packaged build was visually inspected on the Performance screen; the DPI sliders have clean
   tracks without Tahoe's dense stepped tick-mark rows.
+- Packaged build 14 applies Tahoe's native open-hand pointer to all enabled DPI sliders and switches
+  to the closed hand while `Slider.onEditingChanged` reports an active drag. An isolated packaged
+  host dragged Stage 1 from 800 to 8100 DPI, confirming that pointer tracking does not interfere
+  with value changes. Disabled stages omit the grab cursor, and system-managed splitters, scroll
+  bars, and window controls retain their more specific native cursors.
 - The packaged toolbar retains the normal app title on the left and shows the selected profile name
   only once, in the centered editable field.
 - The packaged Buttons screen was visually inspected and shows only the eight user-confirmed
@@ -101,7 +106,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-0f31a46577fbd687bd2b539ecb99cdc87b97e9638c841ef08ccab6542315d839  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+d553255be03ec186bb501e66a10aa0557938b2656a7240fce13514546759215a  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-7774111b6838fe17c3a53f958921fcee8efdffb0e8850af87f3fc2cb1a00a43f  Legion-M600-Manager-macOS-arm64.zip
+583fa65047bf1a73228251a45aa44ac0eddb275443f9255b842d6c19f668f06b  Legion-M600-Manager-macOS-arm64.zip
 ```

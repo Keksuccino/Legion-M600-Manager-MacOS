@@ -76,6 +76,7 @@ private struct DPIStageRow: View {
 private struct DPIControl: View {
   let label: String
   @Binding var value: Int
+  @State private var isDragging = false
 
   var body: some View {
     HStack {
@@ -85,8 +86,10 @@ private struct DPIControl: View {
           get: { Double(value) },
           set: { value = Int($0 / 100) * 100 }
         ),
-        in: 100...16_000
+        in: 100...16_000,
+        onEditingChanged: { isDragging = $0 }
       )
+      .grabPointerStyle(isActive: isDragging)
       TextField("DPI", value: $value, format: .number)
         .frame(width: 74)
         .multilineTextAlignment(.trailing)
