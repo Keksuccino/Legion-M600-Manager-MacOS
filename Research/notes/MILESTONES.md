@@ -1,5 +1,15 @@
 # Milestones
 
+## 2026-08-26 — Public repository and v0.1.25 release preparation
+
+- Preserved the GitHub repository's existing Unlicense commit while joining it with the complete
+  local source history.
+- Replaced the development-oriented README with compact install, usage, feature, build, test, and
+  source-layout instructions.
+- Replaced the ZIP release archive with a compressed macOS disk image containing the runnable app
+  and an Applications shortcut.
+- Rebuilt and verified the Apple Silicon, Tahoe-or-later app before publishing version 0.1.25.
+
 ## 2026-08-26 — Custom application icon
 
 - Adopted the supplied pink mouse artwork as the application icon.

@@ -1,63 +1,72 @@
 # Legion M600 Manager for macOS
 
-An independent native macOS configuration app for the **Lenovo Legion M600 Wireless Gaming Mouse**.
+A native, unofficial macOS configuration app for the **Lenovo Legion M600 Wireless Gaming Mouse**.
 
-The project was built by extracting Lenovo Legion Accessory Central 2.0.9.10231, decompiling its managed M600 module, and tracing the native `ldm_m600.dll` HID transport. It does not run or bundle Windows code.
+Lenovo provides its M600 configuration software for Windows only. This project communicates with the mouse directly over USB HID, so macOS users can configure it without Windows or bundled Lenovo software.
+
+## Install
+
+Requirements: Apple silicon and macOS 26 Tahoe or later.
+
+1. Download the `.dmg` from the [latest release](https://github.com/Keksuccino/Legion-M600-Manager-MacOS/releases/latest).
+2. Open it and drag **Legion M600 Manager** into **Applications**.
+3. Connect the mouse and open the app.
+
+The current release is ad-hoc signed, not Apple-notarized. If macOS blocks the first launch, allow it from **System Settings → Privacy & Security**.
+
+## Configure the mouse
+
+1. Select or create a profile in the sidebar.
+2. Configure performance, buttons, macros, lighting, or device settings.
+3. Click **Apply to Mouse**.
+
+Nothing is written to the mouse until **Apply to Mouse** is clicked. Profile names, colors, and icons are app metadata stored on the Mac.
 
 ## Features
 
-- Local named profiles: create, rename, duplicate, and delete
-- One to four DPI stages, independently configurable X/Y values, 100–16,000 DPI
+- 1–4 DPI stages with independent X/Y values from 100–16,000 DPI
 - 125, 250, 500, and 1,000 Hz polling rates
-- All eight programmable buttons
-- Media commands and DPI cycling
-- Macro editing and recording with delays, keyboard, mouse buttons, and wheel events
-- Two independent RGB zones with Static, Breathing, Rainbow, Random, and Off effects
-- Battery, voltage, 2.4 GHz link, hardware stealth mode, and onboard flash-counter diagnostics
-- Onboard profile persistence and a confirmation-gated factory-reset flow
-- A read-only `m600ctl` diagnostic command
+- Remapping for all eight programmable buttons
+- Key presses, media commands, DPI cycling, and multi-event macros
+- Scroll-wheel and Legion-logo lighting with Static, Breathing, Rainbow, Random, and Off effects
+- Local profiles with custom names, colors, and icons
+- Battery, connection, voltage, stealth-mode, and onboard diagnostics
+- Confirmation-gated factory reset
 
-Firmware update and receiver-pairing paths are intentionally not included. They are unrelated to everyday configuration and carry materially greater recovery risk.
+Firmware updates and receiver pairing are intentionally excluded because they carry greater device-recovery risk and are not needed for normal configuration.
 
-## Build
+## Build and test
 
-Requirements:
-
-- macOS 26 Tahoe or later
-- Xcode 26 or later command-line tools (this workspace uses `/Applications/Xcode-beta.app`)
+Requirements: Xcode 26 or later command-line tools. The scripts expect Xcode at `/Applications/Xcode-beta.app`.
 
 ```sh
 ./Scripts/build-app.sh
+DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer swift test
 ```
 
-Outputs:
+Build outputs:
 
 - `dist/Legion M600 Manager.app`
+- `dist/Legion-M600-Manager-macOS-arm64.dmg`
 - `dist/m600ctl`
-- `dist/Legion-M600-Manager-macOS-arm64.zip` (packaged release archive)
 
-The build is ad-hoc signed. Move the app to `/Applications` if desired, then open it normally. Macro recording is intentionally limited to the active manager window and needs no Accessibility or Input Monitoring permission.
-
-## Test
+`m600ctl` provides read-only diagnostics:
 
 ```sh
-DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer swift test
 dist/m600ctl info
 ```
 
-The CLI is deliberately query-only. Configuration changes require the explicit **Apply to Mouse** button in the app.
+## Source layout
 
-## Project map
+- `Sources/M600Core` — HID transport, protocol codec, packet builders, and models
+- `Sources/M600ManagerApp` — SwiftUI app and macro recorder
+- `Sources/M600CLI` — read-only diagnostic CLI
+- `Tests` — protocol, persistence, profile, and recorder tests
+- `Docs/PROTOCOL.md` — recovered M600 wire protocol and confidence notes
+- `Research` — reverse-engineering notes, milestones, and analysis helpers
 
-- `Sources/M600Core`: profile model/codec, protocol framing, report parser, IOKit transport, and device controller
-- `Sources/M600ManagerApp`: SwiftUI user interface and macro recorder
-- `Sources/M600CLI`: read-only connected-device diagnostics
-- `Tests/M600CoreTests`: deterministic protocol and persistence coverage
-- `Docs/PROTOCOL.md`: recovered wire protocol and confidence notes
-- `Research`: persisted extraction, decompilation, Ghidra project, native output, and milestone journal
+The project does not contain Lenovo's installer or proprietary Windows binaries. It is independent and is not affiliated with or endorsed by Lenovo.
 
-## Status and caveats
+## License
 
-Read-only communication, independently confirmed profile commits, and dedicated lighting activation were verified against a connected M600 (VID `17EF`, PID `60E5`). The live lighting check also confirmed the scroll-wheel and Legion-logo zone identities. Encoding, write ordering, and rejection paths are covered by unit tests against the recovered Windows implementation. The project never writes settings automatically during startup.
-
-This is an independent project and is not affiliated with or endorsed by Lenovo.
+[The Unlicense](LICENSE)

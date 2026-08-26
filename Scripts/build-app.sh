@@ -13,8 +13,14 @@ swift build -c release --product m600ctl
 BIN_DIR=$(swift build -c release --show-bin-path)
 APP_DIR="$PROJECT_DIR/dist/Legion M600 Manager.app"
 CONTENTS_DIR="$APP_DIR/Contents"
-ZIP_PATH="$PROJECT_DIR/dist/Legion-M600-Manager-macOS-arm64.zip"
+DMG_PATH="$PROJECT_DIR/dist/Legion-M600-Manager-macOS-arm64.dmg"
 HASH_PATH="$PROJECT_DIR/dist/SHA256SUMS"
+DMG_STAGING_DIR=$(mktemp -d -t legion-m600-manager-dmg)
+
+cleanup() {
+  rm -rf "$DMG_STAGING_DIR"
+}
+trap cleanup EXIT
 
 mkdir -p "$CONTENTS_DIR/MacOS" "$CONTENTS_DIR/Resources" "$PROJECT_DIR/dist"
 cp "$BIN_DIR/M600 Manager" "$CONTENTS_DIR/MacOS/M600 Manager"
@@ -25,16 +31,24 @@ codesign --force --deep --sign - "$APP_DIR"
 # Finder caches bundle icons against the package directory metadata. Refresh the root timestamp
 # after replacing resources inside an existing app so local rebuilds show a new icon immediately.
 touch "$APP_DIR"
-rm -f "$ZIP_PATH"
-ditto -c -k --sequesterRsrc --keepParent "$APP_DIR" "$ZIP_PATH"
+rm -f "$DMG_PATH"
+ditto "$APP_DIR" "$DMG_STAGING_DIR/Legion M600 Manager.app"
+ln -s /Applications "$DMG_STAGING_DIR/Applications"
+hdiutil create \
+  -quiet \
+  -volname "Legion M600 Manager" \
+  -srcfolder "$DMG_STAGING_DIR" \
+  -ov \
+  -format UDZO \
+  "$DMG_PATH"
 
 cd "$PROJECT_DIR/dist"
 shasum -a 256 \
   "Legion M600 Manager.app/Contents/MacOS/M600 Manager" \
   m600ctl \
-  "Legion-M600-Manager-macOS-arm64.zip" > "$HASH_PATH"
+  "Legion-M600-Manager-macOS-arm64.dmg" > "$HASH_PATH"
 
 echo "Built: $APP_DIR"
 echo "CLI:   $PROJECT_DIR/dist/m600ctl"
-echo "Archive: $ZIP_PATH"
+echo "Disk image: $DMG_PATH"
 echo "Hashes:  $HASH_PATH"

@@ -12,6 +12,8 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- The v0.1.25 release disk image passes `hdiutil verify`, mounts read-only, contains the signed
+  `Legion M600 Manager.app` plus an `/Applications` shortcut, and matches `dist/SHA256SUMS`.
 - Packaged build 26 declares `AppIcon.icns` through `CFBundleIconFile` and includes a byte-identical
   copy in `Contents/Resources`. The reproducible generator preserves the supplied artwork's aspect
   ratio on a transparent square master and emits all ten standard 16–1024px macOS iconset files.
@@ -164,5 +166,5 @@ These hashes are also recorded in `dist/SHA256SUMS`.
 ```text
 36576ff287a3227c2fc7f3c928d502a504e214a2ea4ea733f8833e02999b6b1b  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-be34271bbea97c0c2b8eb4a64cf91dca5dba7bd5e728158fd552239c3aef5b76  Legion-M600-Manager-macOS-arm64.zip
+d04656bf70ba73e75ab0c0ad25251228548e79df6c5e32175358296ab03e4f77  Legion-M600-Manager-macOS-arm64.dmg
 ```
