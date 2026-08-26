@@ -54,7 +54,7 @@ struct ProfileEditorView: View {
           .textFieldStyle(.plain)
           .font(.headline)
           .multilineTextAlignment(.center)
-          .frame(width: 260)
+          .frame(width: 208)
       }
 
       ToolbarItem(placement: .principal) {

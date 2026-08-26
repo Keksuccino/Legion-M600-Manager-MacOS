@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Narrower profile-name field
+
+- Reduced the centered profile-name field from 260 to 208 points while preserving its native
+  styling and the placement of the adjacent appearance controls.
+- Released the width refinement as version 0.1.21 (build 22).
+
 ## 2026-08-26 — Tighter profile appearance controls
 
 - Moved the profile icon and color controls closer to the centered name field by removing the two

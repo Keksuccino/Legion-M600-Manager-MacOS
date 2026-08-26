@@ -12,6 +12,9 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 22 reduces the centered profile-name field from 260 to 208 points, exactly 20%.
+  Visual inspection confirmed the narrower field retains its native appearance, stays centered,
+  and keeps balanced spacing to the independent icon and color controls.
 - Packaged build 21 removes the two explicit fixed toolbar spacers around the profile-name field.
   Visual inspection confirmed the independent icon and color controls now sit immediately beside
   the unchanged native name pill with balanced, substantially smaller gaps.
@@ -138,7 +141,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-4a505267166d9333ee76b8a95330928f61cab0679844cc6a85dba7c664cd1bb8  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+023a06ea0bd6ae131954b70be27a4e236f4e94928543b042f4a455557ca2490c  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-78b5f0b53d0927b635b0f3709bfa560968361ae03789a4b9514ed9320bd29ca0  Legion-M600-Manager-macOS-arm64.zip
+8144bd29e31ebe5721f2fd1e159afa6934d173bb7cebbe91d65cba157f094fd2  Legion-M600-Manager-macOS-arm64.zip
 ```
