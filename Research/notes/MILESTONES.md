@@ -4,12 +4,15 @@
 
 - Added one reusable Tahoe pointer modifier that shows an open hand over custom draggable controls
   and a closed hand while their drag is active.
-- Applied the modifier to every DPI slider and suppressed it automatically for disabled stages.
+- Applied the modifier to every DPI slider and macro event reorder surface, while suppressing it
+  for disabled stages and during macro recording.
+- Added an immediate native cursor refresh for active drags so the hand closes while the mouse
+  button remains held instead of waiting for SwiftUI to refresh the cursor rect.
 - Kept native resize/scroll cursors on system-managed surfaces and native link cursors on macro
   trash buttons.
 - Verified a real packaged slider drag in a disposable host without loading saved profiles or
   applying anything to the mouse.
-- Released the change as version 0.1.13 (build 14) with all 27 tests passing.
+- Released the completed cursor behavior as version 0.1.14 (build 15) with all 27 tests passing.
 
 ## 2026-08-26 — Professional live macro editor
 

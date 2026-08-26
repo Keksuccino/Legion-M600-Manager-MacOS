@@ -19,6 +19,10 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
   host dragged Stage 1 from 800 to 8100 DPI, confirming that pointer tracking does not interfere
   with value changes. Disabled stages omit the grab cursor, and system-managed splitters, scroll
   bars, and window controls retain their more specific native cursors.
+- Packaged build 15 extends the same cursor behavior to each macro event's reorder surface. The
+  trash button remains a separate red link-style target, recording mode suppresses row reordering,
+  and an immediate `NSCursor` refresh closes the hand as soon as the row drag becomes active rather
+  than waiting for SwiftUI to recalculate its cursor rect.
 - The packaged toolbar retains the normal app title on the left and shows the selected profile name
   only once, in the centered editable field.
 - The packaged Buttons screen was visually inspected and shows only the eight user-confirmed
@@ -106,7 +110,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-d553255be03ec186bb501e66a10aa0557938b2656a7240fce13514546759215a  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+af76f3b7bfcd4f204b7ad5c9640bd2efe274bdcab022f433f1b2a1e14f4d7237  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-583fa65047bf1a73228251a45aa44ac0eddb275443f9255b842d6c19f668f06b  Legion-M600-Manager-macOS-arm64.zip
+3065d2ae19fec87d2ff706bb80c3d745f3fc5cb647d08258e08dc4eb0b292b38  Legion-M600-Manager-macOS-arm64.zip
 ```

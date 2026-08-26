@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 extension View {
@@ -14,6 +15,7 @@ private struct GrabPointerStyleModifier: ViewModifier {
   let isEnabled: Bool
 
   @Environment(\.isEnabled) private var environmentIsEnabled
+  @State private var isHovering = false
 
   private var effectiveIsEnabled: Bool {
     isEnabled && environmentIsEnabled
@@ -24,5 +26,31 @@ private struct GrabPointerStyleModifier: ViewModifier {
       .pointerStyle(
         effectiveIsEnabled ? (isActive ? .grabActive : .grabIdle) : nil
       )
+      .onHover { hovering in
+        isHovering = hovering
+      }
+      .onChange(of: isActive) {
+        refreshCursorIfHovered()
+      }
+      .onChange(of: effectiveIsEnabled) {
+        refreshCursorIfHovered()
+      }
+      .onDisappear {
+        // An active cursor set while the button is held can outlive a disappearing drag surface.
+        if isHovering, isActive { NSCursor.arrow.set() }
+      }
+  }
+
+  private func refreshCursorIfHovered() {
+    guard isHovering else { return }
+
+    guard effectiveIsEnabled else {
+      NSCursor.arrow.set()
+      return
+    }
+
+    // PointerStyle updates its cursor rect lazily. Force the matching native cursor immediately
+    // when drag state changes so the hand closes without waiting for another hover transition.
+    (isActive ? NSCursor.closedHand : NSCursor.openHand).set()
   }
 }

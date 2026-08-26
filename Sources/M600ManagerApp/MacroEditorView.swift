@@ -74,7 +74,7 @@ struct MacroEditorView: View {
             MacroStepRow(
               index: index,
               step: step,
-              deletionDisabled: recorder.isRecording
+              editingDisabled: recorder.isRecording
             ) {
               guard macro.steps.indices.contains(index) else { return }
               macro.steps.remove(at: index)
@@ -288,26 +288,40 @@ private struct MacroControlCard<Content: View>: View {
 private struct MacroStepRow: View {
   let index: Int
   let step: MacroStep
-  let deletionDisabled: Bool
+  let editingDisabled: Bool
   let delete: () -> Void
+
+  @GestureState private var isDragging = false
 
   var body: some View {
     HStack(spacing: 12) {
-      Text("\(index + 1)")
-        .font(.caption.monospacedDigit())
-        .foregroundStyle(.tertiary)
-        .frame(width: 28, alignment: .trailing)
+      HStack(spacing: 12) {
+        Text("\(index + 1)")
+          .font(.caption.monospacedDigit())
+          .foregroundStyle(.tertiary)
+          .frame(width: 28, alignment: .trailing)
 
-      Image(systemName: step.iconName)
-        .foregroundStyle(step.iconColor)
-        .frame(width: 22)
+        Image(systemName: step.iconName)
+          .foregroundStyle(step.iconColor)
+          .frame(width: 22)
 
-      Text(step.displayName)
-        .lineLimit(1)
+        Text(step.displayName)
+          .lineLimit(1)
 
-      Spacer(minLength: 16)
+        Spacer(minLength: 16)
+      }
+      .contentShape(Rectangle())
+      .simultaneousGesture(
+        DragGesture(minimumDistance: 1)
+          .updating($isDragging) { _, isDragging, _ in
+            guard !editingDisabled else { return }
+            isDragging = true
+          }
+      )
+      .help(editingDisabled ? "Stop recording before reordering events" : "Drag to reorder")
+      .grabPointerStyle(isActive: isDragging, isEnabled: !editingDisabled)
 
-      MacroDeleteButton(disabled: deletionDisabled, action: delete)
+      MacroDeleteButton(disabled: editingDisabled, action: delete)
     }
     .padding(.vertical, 5)
   }
