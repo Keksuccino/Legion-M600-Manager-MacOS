@@ -6,8 +6,8 @@
   local source history.
 - Replaced the development-oriented README with compact install, usage, feature, build, test, and
   source-layout instructions.
-- Replaced the ZIP release archive with a compressed macOS disk image containing the runnable app
-  and an Applications shortcut.
+- Packaged the runnable app in a macOS metadata-preserving ZIP so GitHub presents it as one release
+  attachment instead of exposing the `.app` bundle as a folder.
 - Rebuilt and verified the Apple Silicon, Tahoe-or-later app before publishing version 0.1.25.
 
 ## 2026-08-26 — Custom application icon

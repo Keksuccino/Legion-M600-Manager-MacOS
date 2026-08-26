@@ -8,8 +8,8 @@ Lenovo provides its M600 configuration software for Windows only. This project c
 
 Requirements: Apple silicon and macOS 26 Tahoe or later.
 
-1. Download the `.dmg` from the [latest release](https://github.com/Keksuccino/Legion-M600-Manager-MacOS/releases/latest).
-2. Open it and drag **Legion M600 Manager** into **Applications**.
+1. Download the app `.zip` from the [latest release](https://github.com/Keksuccino/Legion-M600-Manager-MacOS/releases/latest).
+2. Extract it and move **Legion M600 Manager** into **Applications**.
 3. Connect the mouse and open the app.
 
 The current release is ad-hoc signed, not Apple-notarized. If macOS blocks the first launch, allow it from **System Settings → Privacy & Security**.
@@ -47,7 +47,7 @@ DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer swift test
 Build outputs:
 
 - `dist/Legion M600 Manager.app`
-- `dist/Legion-M600-Manager-macOS-arm64.dmg`
+- `dist/Legion-M600-Manager-macOS-arm64.zip`
 - `dist/m600ctl`
 
 `m600ctl` provides read-only diagnostics:
