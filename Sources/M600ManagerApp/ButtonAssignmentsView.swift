@@ -10,12 +10,7 @@ struct ButtonAssignmentsView: View {
       Section("Programmable buttons") {
         ForEach($bindings) { $binding in
           HStack {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(binding.button.displayName)
-              Text("Hardware position \(binding.button.rawValue)")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-            }
+            Text(binding.button.displayName)
             Spacer()
             Picker("Action", selection: $binding.action) {
               ForEach(ButtonActionKind.allCases) { action in

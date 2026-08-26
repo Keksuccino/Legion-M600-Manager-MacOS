@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Simplified button rows
+
+- Removed the internal hardware-position subtitle from the Buttons screen.
+- Preserved the device offsets exclusively in the protocol model, where they remain part of
+  profile encoding without exposing implementation details in the user interface.
+
 ## 2026-08-26 — Physical button labels
 
 - Replaced the inferred physical-button names with user-confirmed left/right side and

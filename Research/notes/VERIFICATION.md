@@ -16,8 +16,9 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
   tracks without Tahoe's dense stepped tick-mark rows.
 - The packaged toolbar retains the normal app title on the left and shows the selected profile name
   only once, in the centered editable field.
-- The packaged Buttons screen was visually inspected and shows all eight user-confirmed physical
-  button labels while retaining their existing hardware positions and actions.
+- The packaged Buttons screen was visually inspected and shows only the eight user-confirmed
+  physical button labels and action controls. Internal hardware-position subtitles are absent,
+  while the underlying device offsets and existing assignments remain unchanged.
 - `plutil`: packaged `Info.plist` is valid.
 - `codesign --verify --deep --strict`: packaged app is valid and satisfies its ad-hoc designated requirement.
 - App executable links only system frameworks/libraries (AppKit, ApplicationServices, IOKit, Foundation, Combine, SwiftUI, and Swift runtime libraries).
@@ -74,7 +75,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-82ec67702660a75d251ece42facbc6bd5e46da5a703d0d3c0546b93debc52bdb  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+3d15b8280cc57300e1418771564b2ff7e61623f735008d99c377b4614ba737e7  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 db408af637a6f3cccb27d777d135623755984c1de1ffb4533c8adba7690285c5  m600ctl
-f7e9152b9c0a52b2af4113f04571802628237b202cf79853516d124461076267  Legion-M600-Manager-macOS-arm64.zip
+1219b8cfdac20c416b9e2ffe45b627e708143076de012369028c9e8ca78d35e0  Legion-M600-Manager-macOS-arm64.zip
 ```
