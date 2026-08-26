@@ -1,5 +1,15 @@
 # Milestones
 
+## 2026-08-26 — Timed Clear confirmation
+
+- Changed the macro editor's destructive Clear action into a two-click confirmation: the first
+  click presents a red Sure? button and only a second click within three seconds clears events.
+- Added outside-click cancellation and automatic timeout restoration without affecting the macro.
+- Used a monotonic deadline so an expired confirmation can never clear data even if its UI timer is
+  scheduled late.
+- Added deterministic confirmation, cancellation, boundary, and expiration coverage.
+- Released the behavior as version 0.1.18 (build 19).
+
 ## 2026-08-26 — App-only macro recording
 
 - Removed global event monitoring and the Accessibility trust check so macros can be recorded only

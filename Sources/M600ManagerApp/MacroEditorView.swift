@@ -2,6 +2,8 @@ import M600Core
 import SwiftUI
 
 struct MacroEditorView: View {
+  private static let coordinateSpaceName = "MacroEditor"
+
   @Binding var macro: MacroDefinition
   let buttonName: String
 
@@ -10,6 +12,8 @@ struct MacroEditorView: View {
   @State private var selectedKeyUsage: UInt8 = 0x04
   @State private var selectedMouseButton = MacroMouseButton.left
   @State private var delayMilliseconds = 100
+  @State private var clearConfirmation = TimedConfirmationState(timeout: .seconds(3))
+  @State private var clearButtonFrame = CGRect.zero
 
   var body: some View {
     VStack(spacing: 0) {
@@ -22,6 +26,27 @@ struct MacroEditorView: View {
       }
     }
     .frame(minWidth: 920, minHeight: 620)
+    .contentShape(Rectangle())
+    .coordinateSpace(name: Self.coordinateSpaceName)
+    .simultaneousGesture(
+      SpatialTapGesture()
+        .onEnded { value in
+          guard clearConfirmation.isAwaitingConfirmation else { return }
+          guard !clearButtonFrame.contains(value.location) else { return }
+          clearConfirmation.cancel()
+        },
+      including: .all
+    )
+    .task(id: clearConfirmation.deadline) {
+      guard let deadline = clearConfirmation.deadline else { return }
+      let clock = ContinuousClock()
+      do {
+        try await clock.sleep(until: deadline)
+      } catch {
+        return
+      }
+      clearConfirmation.expire(at: clock.now)
+    }
     .onReceive(recorder.$steps) { steps in
       guard recorder.isRecording else { return }
       macro.steps = steps
@@ -60,8 +85,7 @@ struct MacroEditorView: View {
           .font(.caption)
           .foregroundStyle(.secondary)
         Spacer()
-        Button("Clear", role: .destructive, action: clearSteps)
-          .disabled(macro.steps.isEmpty)
+        clearButton
       }
       .padding(.horizontal, 20)
       .padding(.vertical, 14)
@@ -256,6 +280,32 @@ struct MacroEditorView: View {
 
   private var stepCountLabel: String {
     "\(macro.steps.count) \(macro.steps.count == 1 ? "event" : "events")"
+  }
+
+  private var clearButton: some View {
+    clearButtonContent
+      .disabled(macro.steps.isEmpty)
+      .onGeometryChange(for: CGRect.self) { proxy in
+        proxy.frame(in: .named(Self.coordinateSpaceName))
+      } action: { frame in
+        clearButtonFrame = frame
+      }
+  }
+
+  @ViewBuilder
+  private var clearButtonContent: some View {
+    if clearConfirmation.isAwaitingConfirmation {
+      Button("Sure?", role: .destructive, action: activateOrConfirmClear)
+        .buttonStyle(.borderedProminent)
+        .tint(.red)
+    } else {
+      Button("Clear", role: .destructive, action: activateOrConfirmClear)
+    }
+  }
+
+  private func activateOrConfirmClear() {
+    guard clearConfirmation.activateOrConfirm() else { return }
+    clearSteps()
   }
 
   private func clearSteps() {

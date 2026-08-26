@@ -8,10 +8,14 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 28 tests executed, 0 failures.
+- `swift test`: 31 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
+- Packaged build 19 requires two Clear-button activations within a monotonic three-second window.
+  An isolated profile verified the red Sure? state, automatic timeout, empty-area click
+  cancellation, preservation after both cancellation paths, and deletion only after the timely
+  second click. The temporary profile-store hook was removed before the final package was built.
 - Packaged build 18 contains no global event-monitor API, Accessibility trust check,
   ApplicationServices linkage, or Input Monitoring usage description. Its recorder accepts only
   local events while the manager is active, with an explicit inactive-manager regression test.
@@ -120,7 +124,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-ffbab71ac20867212a0cded93e90e2476051a1d05c97b266584f085aeabbd4c0  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+22fca5abab41d8fcdcffef2774325bc7e7a90925b74959f3ca7dc66d016af08b  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-ac889b539da5e76eebbddcebc7460f58c58b8732a099a6483018af311e189ac2  Legion-M600-Manager-macOS-arm64.zip
+2249f34a4947edff2b33f8c806b7dbe34cb1c1b497bb0c040914b56b9ec70bdb  Legion-M600-Manager-macOS-arm64.zip
 ```
