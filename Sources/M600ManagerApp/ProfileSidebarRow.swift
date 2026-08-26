@@ -4,16 +4,14 @@ import SwiftUI
 struct ProfileSidebarRow: View {
   let profile: M600Profile
   let canDelete: Bool
-  let edit: () -> Void
   let rename: (String) -> Void
   let duplicate: () -> Void
   let delete: () -> Void
-  let setIcon: (String) -> Void
-  let setColor: (M600Core.RGBColor) -> Void
+  let showIconPicker: () -> Void
+  let showColorPicker: () -> Void
 
   @State private var isRenaming = false
   @State private var renameDraft = ""
-  @State private var isCustomColorPickerPresented = false
   @FocusState private var isRenameFieldFocused: Bool
 
   var body: some View {
@@ -41,76 +39,19 @@ struct ProfileSidebarRow: View {
     .contentShape(Rectangle())
     .accessibilityLabel(profile.name)
     .contextMenu {
-      Button("Edit", systemImage: "pencil", action: edit)
       Button("Rename", systemImage: "text.cursor", action: beginRename)
       Button("Duplicate", systemImage: "plus.square.on.square", action: duplicate)
 
       Divider()
 
-      Menu("Change Icon", systemImage: "square.grid.3x3") {
-        ForEach(ProfileIconCatalog.options) { option in
-          Button {
-            setIcon(option.systemName)
-          } label: {
-            Label(option.name, systemImage: option.systemName)
-          }
-        }
-      }
-
-      Menu("Change Color", systemImage: "paintpalette") {
-        ForEach(ProfileColorCatalog.options) { option in
-          Button {
-            setColor(option.color)
-          } label: {
-            Label(option.name, systemImage: "circle.fill")
-          }
-          .tint(option.color.swiftUIColor)
-        }
-
-        Divider()
-
-        Button("Custom Color…", systemImage: "eyedropper") {
-          isCustomColorPickerPresented = true
-        }
-      }
+      Button("Change Icon", systemImage: "square.grid.3x3", action: showIconPicker)
+      Button("Change Color", systemImage: "paintpalette", action: showColorPicker)
 
       Divider()
 
       Button("Delete", systemImage: "trash", role: .destructive, action: delete)
         .disabled(!canDelete)
     }
-    .popover(isPresented: $isCustomColorPickerPresented, arrowEdge: .leading) {
-      VStack(alignment: .leading, spacing: 14) {
-        Text("Custom Profile Color")
-          .font(.headline)
-
-        ColorPicker(
-          "Color",
-          selection: customColorBinding,
-          supportsOpacity: false
-        )
-
-        HStack {
-          Spacer()
-          Button("Done") {
-            isCustomColorPickerPresented = false
-          }
-          .keyboardShortcut(.defaultAction)
-        }
-      }
-      .padding(16)
-      .frame(width: 250)
-    }
-  }
-
-  private var customColorBinding: Binding<Color> {
-    Binding(
-      get: { profile.resolvedProfileColor.swiftUIColor },
-      set: { color in
-        guard let converted = M600Core.RGBColor(swiftUIColor: color) else { return }
-        setColor(converted)
-      }
-    )
   }
 
   private func beginRename() {

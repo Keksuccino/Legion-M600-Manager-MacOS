@@ -3,6 +3,7 @@ import SwiftUI
 
 struct RootView: View {
   @ObservedObject var model: AppModel
+  @State private var presentedProfileAppearancePicker: ProfileAppearancePicker?
 
   var body: some View {
     NavigationSplitView {
@@ -12,12 +13,11 @@ struct RootView: View {
             ProfileSidebarRow(
               profile: profile,
               canDelete: model.profiles.count > 1,
-              edit: { model.selectProfile(profile.id) },
               rename: { model.renameProfile(profile.id, to: $0) },
               duplicate: { model.duplicateProfile(profile.id) },
               delete: { model.deleteProfile(profile.id) },
-              setIcon: { model.setProfileIcon(profile.id, to: $0) },
-              setColor: { model.setProfileColor(profile.id, to: $0) }
+              showIconPicker: { showAppearancePicker(.icon, for: profile.id) },
+              showColorPicker: { showAppearancePicker(.color, for: profile.id) }
             )
             .tag(profile.id)
           }
@@ -37,7 +37,8 @@ struct RootView: View {
         ProfileEditorView(
           profile: $model.profiles[index],
           device: model.device,
-          save: model.save
+          save: model.save,
+          presentedAppearancePicker: $presentedProfileAppearancePicker
         )
         .id(model.profiles[index].id)
       } else {
@@ -56,5 +57,20 @@ struct RootView: View {
       Text(model.persistenceError ?? "Unknown error")
     }
     .onChange(of: model.selectedProfileID) { model.save() }
+  }
+
+  private func showAppearancePicker(
+    _ picker: ProfileAppearancePicker,
+    for profileID: UUID
+  ) {
+    model.selectProfile(profileID)
+
+    // A context-menu action dismisses its menu automatically. Deferring presentation by one
+    // main-actor turn gives AppKit time to remove that menu before SwiftUI attaches the toolbar
+    // popover, avoiding an intermittent no-op when the target profile was not already selected.
+    Task { @MainActor in
+      await Task.yield()
+      presentedProfileAppearancePicker = picker
+    }
   }
 }

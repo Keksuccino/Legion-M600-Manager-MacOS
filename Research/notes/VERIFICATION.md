@@ -12,15 +12,17 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
-- Packaged build 23 gives every local-profile row a native right-click menu with Edit, Rename,
-  Duplicate, Change Icon, Change Color, and Delete. Interactive inspection confirmed the icon and
-  color submenus, enabled custom-color popover, inline Rename field, and removal of the former
-  toolbar actions menu. The app was returned to its unchanged Default profile without activating
-  Delete or Apply.
+- Packaged build 24 gives every local-profile row a native right-click menu with Rename, Duplicate,
+  Change Icon, Change Color, and Delete; the redundant Edit item is absent. Invoking each appearance
+  action on a different unselected profile dismissed the context menu, selected the targeted row,
+  and presented the same complete toolbar popover: all 50 icons for Change Icon, and all 18 presets
+  plus Custom Color for Change Color. Both popovers were closed without making a selection, and the
+  app was returned to its unchanged Default profile without activating Delete or Apply.
 - Row-targeted tests confirm that actions affect the profile that opened the menu rather than merely
   the selected profile. They cover duplication, selection preservation and fallback, last-profile
-  deletion protection, rename, icon/color changes, and persisted results using an inactive test
-  transport that cannot communicate with the connected mouse.
+  deletion protection, rename, and persisted results using an inactive test transport that cannot
+  communicate with the connected mouse. Separate profile-appearance tests retain catalog and color
+  conversion coverage.
 - Packaged build 22 reduces the centered profile-name field from 260 to 208 points, exactly 20%.
   Visual inspection confirmed the narrower field retains its native appearance, stays centered,
   and keeps balanced spacing to the independent icon and color controls.
@@ -150,7 +152,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-1a97e3e3947954192b475bccbb467a15e8820a4d9770c89edd974e8d572c55e2  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+3adf83dde7ce247d45cadac3c387db62c9ae1e08671899b1c21ae9e209e31918  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 0c759527eb3e3703a071bdb0ab0a0e9996de79ea36dea65863f64ac62736fc43  m600ctl
-b7ee3f837c33b9d47ae0ceaece026569ae293c226fca97166f7a1252e91a5e76  Legion-M600-Manager-macOS-arm64.zip
+3ec0dd7329d6a77f5a82d59885b35759e4386394939ce773832ab37cc5d73855  Legion-M600-Manager-macOS-arm64.zip
 ```

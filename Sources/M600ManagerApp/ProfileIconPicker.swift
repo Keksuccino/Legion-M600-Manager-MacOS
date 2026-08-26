@@ -109,8 +109,8 @@ enum ProfileIconCatalog {
 struct ProfileIconPicker: View {
   @Binding var selection: String
   let tint: Color
+  @Binding var isPresented: Bool
 
-  @State private var isPresented = false
   @State private var isHovered = false
 
   private var columns: [GridItem] {

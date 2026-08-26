@@ -45,8 +45,8 @@ enum ProfileColorCatalog {
 
 struct ProfileColorPicker: View {
   @Binding var selection: M600Core.RGBColor
+  @Binding var isPresented: Bool
 
-  @State private var isPresented = false
   @State private var isHovered = false
 
   private let columns = Array(repeating: GridItem(.fixed(30), spacing: 10), count: 6)

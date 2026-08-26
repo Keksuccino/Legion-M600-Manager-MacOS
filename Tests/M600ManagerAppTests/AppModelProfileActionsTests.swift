@@ -27,7 +27,7 @@ final class AppModelProfileActionsTests: XCTestCase {
     XCTAssertEqual(model.selectedProfileID, duplicate.id)
   }
 
-  func testRowActionsMutateAndDeleteOnlyTheRequestedProfile() throws {
+  func testRowActionsRenameAndDeleteOnlyTheRequestedProfile() throws {
     let first = M600Profile(name: "First")
     let second = M600Profile(name: "Second")
     let third = M600Profile(name: "Third")
@@ -41,14 +41,9 @@ final class AppModelProfileActionsTests: XCTestCase {
     XCTAssertEqual(model.selectedProfileID, first.id)
     model.selectProfile(second.id)
 
-    let color = M600Core.RGBColor(red: 90, green: 80, blue: 70)
     model.renameProfile(first.id, to: "Renamed")
-    model.setProfileIcon(first.id, to: "music.note")
-    model.setProfileColor(first.id, to: color)
 
     XCTAssertEqual(model.profiles[0].name, "Renamed")
-    XCTAssertEqual(model.profiles[0].iconName, "music.note")
-    XCTAssertEqual(model.profiles[0].profileColor, color)
     XCTAssertEqual(model.profiles[1].name, "Second")
 
     model.deleteProfile(first.id)

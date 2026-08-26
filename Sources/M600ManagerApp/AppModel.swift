@@ -75,16 +75,6 @@ final class AppModel: ObservableObject {
     updateProfile(id) { $0.name = name }
   }
 
-  func setProfileIcon(_ id: UUID, to iconName: String) {
-    updateProfile(id) {
-      $0.iconName = ProfileIconCatalog.resolvedIconName(iconName)
-    }
-  }
-
-  func setProfileColor(_ id: UUID, to color: M600Core.RGBColor) {
-    updateProfile(id) { $0.profileColor = color }
-  }
-
   private func updateProfile(
     _ id: UUID,
     mutation: (inout M600Profile) -> Void

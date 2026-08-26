@@ -1,5 +1,14 @@
 # Milestones
 
+## 2026-08-26 — Unified profile appearance choosers
+
+- Removed the redundant Edit entry from every profile context menu.
+- Replaced the nested icon and color submenus with direct actions that close the menu, select the
+  targeted profile, and open the same full toolbar chooser used during normal editing.
+- Lifted popover presentation state to the root view so both toolbar clicks and row context actions
+  share one icon chooser and one color chooser implementation.
+- Released the refinement as version 0.1.23 (build 24).
+
 ## 2026-08-26 — Profile sidebar context menu
 
 - Added row-targeted Edit, Rename, Duplicate, Delete, Change Icon, and Change Color actions to a

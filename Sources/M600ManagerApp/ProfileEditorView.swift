@@ -1,10 +1,16 @@
 import M600Core
 import SwiftUI
 
+enum ProfileAppearancePicker: Equatable {
+  case icon
+  case color
+}
+
 struct ProfileEditorView: View {
   @Binding var profile: M600Profile
   @ObservedObject var device: M600DeviceController
   let save: () -> Void
+  @Binding var presentedAppearancePicker: ProfileAppearancePicker?
 
   @State private var selectedTab = EditorTab.performance
   @State private var showFactoryRestoreConfirmation = false
@@ -44,7 +50,8 @@ struct ProfileEditorView: View {
       ToolbarItem(placement: .principal) {
         ProfileIconPicker(
           selection: profileIconBinding,
-          tint: profile.resolvedProfileColor.swiftUIColor
+          tint: profile.resolvedProfileColor.swiftUIColor,
+          isPresented: appearancePickerBinding(for: .icon)
         )
       }
       .sharedBackgroundVisibility(.hidden)
@@ -58,7 +65,10 @@ struct ProfileEditorView: View {
       }
 
       ToolbarItem(placement: .principal) {
-        ProfileColorPicker(selection: profileColorBinding)
+        ProfileColorPicker(
+          selection: profileColorBinding,
+          isPresented: appearancePickerBinding(for: .color)
+        )
       }
       .sharedBackgroundVisibility(.hidden)
     }
@@ -102,6 +112,21 @@ struct ProfileEditorView: View {
     Binding(
       get: { profile.resolvedProfileColor },
       set: { profile.profileColor = $0 }
+    )
+  }
+
+  private func appearancePickerBinding(
+    for picker: ProfileAppearancePicker
+  ) -> Binding<Bool> {
+    Binding(
+      get: { presentedAppearancePicker == picker },
+      set: { isPresented in
+        if isPresented {
+          presentedAppearancePicker = picker
+        } else if presentedAppearancePicker == picker {
+          presentedAppearancePicker = nil
+        }
+      }
     )
   }
 
