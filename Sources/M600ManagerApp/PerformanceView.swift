@@ -85,8 +85,7 @@ private struct DPIControl: View {
           get: { Double(value) },
           set: { value = Int($0 / 100) * 100 }
         ),
-        in: 100...16_000,
-        step: 100
+        in: 100...16_000
       )
       TextField("DPI", value: $value, format: .number)
         .frame(width: 74)

@@ -1,5 +1,11 @@
 # Milestones
 
+## 2026-08-26 — Tahoe DPI slider appearance
+
+- Removed SwiftUI's stepped-slider presentation from the DPI controls so Tahoe no longer draws
+  a dense row of tick marks beneath each track.
+- Preserved the M600's required 100-DPI increments in the slider binding and numeric field.
+
 ## 2026-08-26 — Tahoe deployment target
 
 - Raised both the SwiftPM and app-bundle minimum deployment target from macOS 14 to macOS 26.
