@@ -22,6 +22,10 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - Packaged build 11 exposes `Key Press` as a nested action menu with all keys from the shared macro
   key catalog. Selecting `A` changed the row label to `Press A`; the test row was then restored to
   its original `Disabled` action with no residual key-press usage in `profiles.json`.
+- Packaged build 12 replaces the inset native tab shell with a full-size borderless editor. Visual
+  inspection confirmed that the old horizontal gaps and asymmetric outer border are gone while the
+  centered segmented selector remains. Performance, Buttons, Lighting, and Device all opened
+  successfully, and the app was left on Buttons.
 - Exact codec coverage confirms that a dedicated `Press A` action programs the macro matrix and a
   34-byte body: Lenovo's 30-byte prefix followed by A down (`02 04`) and A up (`03 04`). A separate
   two-step user macro remains explicitly classified as `Macro`.
@@ -89,7 +93,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-d3b582b672d3750385878f508ae137bfd19c6783bbc148fb9dfe8aa5d5bc9801  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+72051b0f3091790dd0ccb58576701565eab49a19230bbcefacdcf9b07913171b  Legion M600 Manager.app/Contents/MacOS/M600 Manager
 60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
-623e3641c1220cc6039064ae7d02bd1cd3cb70227402ea214c4c5effc516166d  Legion-M600-Manager-macOS-arm64.zip
+96456f691a67e35eacb95d814a5c0193941c19366b81fb1e489fe7b040724a8e  Legion-M600-Manager-macOS-arm64.zip
 ```

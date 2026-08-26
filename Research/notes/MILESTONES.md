@@ -1,5 +1,15 @@
 # Milestones
 
+## 2026-08-26 — Borderless full-size editor
+
+- Replaced SwiftUI's native bordered `TabView` shell with a full-size editor container and a
+  centered segmented section picker.
+- Removed the 18-point horizontal inset plus the native left, right, bottom, and heavier top
+  borders while preserving the existing configuration screens and bindings.
+- Visually inspected the packaged Buttons layout and opened all four editor sections to confirm
+  the replacement navigation works.
+- Released the change as version 0.1.11 (build 12) with all 24 tests passing.
+
 ## 2026-08-26 — Dedicated key-press button action
 
 - Added a nested `Key Press` menu using the macro editor's shared HID-key catalog and displayed

@@ -9,11 +9,13 @@ struct ProfileEditorView: View {
   @State private var selectedTab = EditorTab.performance
   @State private var showFactoryRestoreConfirmation = false
 
-  enum EditorTab: Hashable {
-    case performance
-    case buttons
-    case lighting
-    case device
+  enum EditorTab: String, CaseIterable, Identifiable {
+    case performance = "Performance"
+    case buttons = "Buttons"
+    case lighting = "Lighting"
+    case device = "Device"
+
+    var id: Self { self }
   }
 
   var body: some View {
@@ -23,24 +25,20 @@ struct ProfileEditorView: View {
         Task { await device.apply(profile) }
       }
       Divider()
-      TabView(selection: $selectedTab) {
-        PerformanceView(profile: $profile)
-          .tabItem { Label("Performance", systemImage: "speedometer") }
-          .tag(EditorTab.performance)
-        ButtonAssignmentsView(bindings: $profile.buttonBindings)
-          .tabItem { Label("Buttons", systemImage: "button.programmable") }
-          .tag(EditorTab.buttons)
-        LightingView(zones: $profile.lightingZones, stealthModeActive: device.stealthModeActive)
-          .tabItem { Label("Lighting", systemImage: "lightbulb.led") }
-          .tag(EditorTab.lighting)
-        DeviceSettingsView(
-          device: device,
-          showFactoryRestoreConfirmation: $showFactoryRestoreConfirmation
-        )
-        .tabItem { Label("Device", systemImage: "gearshape") }
-        .tag(EditorTab.device)
+      VStack(spacing: 0) {
+        Picker("Configuration section", selection: $selectedTab) {
+          ForEach(EditorTab.allCases) { tab in
+            Text(tab.rawValue).tag(tab)
+          }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+        .frame(width: 540)
+
+        selectedEditor
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-      .padding(.horizontal, 18)
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
     .toolbar {
       ToolbarItem(placement: .principal) {
@@ -77,6 +75,23 @@ struct ProfileEditorView: View {
       Button("Cancel", role: .cancel) {}
     } message: {
       Text("This replaces the configuration stored in the mouse. Your local profiles are kept.")
+    }
+  }
+
+  @ViewBuilder
+  private var selectedEditor: some View {
+    switch selectedTab {
+    case .performance:
+      PerformanceView(profile: $profile)
+    case .buttons:
+      ButtonAssignmentsView(bindings: $profile.buttonBindings)
+    case .lighting:
+      LightingView(zones: $profile.lightingZones, stealthModeActive: device.stealthModeActive)
+    case .device:
+      DeviceSettingsView(
+        device: device,
+        showFactoryRestoreConfirmation: $showFactoryRestoreConfirmation
+      )
     }
   }
 }
