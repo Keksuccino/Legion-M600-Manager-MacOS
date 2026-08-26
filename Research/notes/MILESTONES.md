@@ -1,5 +1,18 @@
 # Milestones
 
+## 2026-08-26 — Dedicated key-press button action
+
+- Added a nested `Key Press` menu using the macro editor's shared HID-key catalog and displayed
+  selections as `Press <key name>` in each button row.
+- Persisted key presses explicitly rather than inferring them from two-step macros, so a user-made
+  key-down/key-up macro remains a macro and retains its name and editability.
+- Compiled key presses to the existing M600 macro protocol without duplicating or replacing the
+  binding's editable macro definition.
+- Added validation, exact protocol encoding, intent-preservation, and persistence coverage,
+  bringing the deterministic suite to 24 tests.
+- Visually verified `Key Press → A` and the resulting `Press A` label in packaged build 11, then
+  restored the temporary local test assignment without applying it to the mouse.
+
 ## 2026-08-26 — Multi-chunk macro pacing
 
 - Reproduced the user's click-plus-`qwertz` macro as a 97-byte body split across two 57-byte

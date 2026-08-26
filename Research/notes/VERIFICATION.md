@@ -8,7 +8,7 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 ## Deterministic checks
 
 - `swift format lint`: clean.
-- `swift test`: 20 tests executed, 0 failures.
+- `swift test`: 24 tests executed, 0 failures.
 - Debug app and CLI products compile.
 - Release app and CLI products compile.
 - App and CLI `LC_BUILD_VERSION` records both declare macOS 26.0 as `minos`.
@@ -19,6 +19,12 @@ Deployment target: macOS 26 Tahoe, Apple Silicon
 - The packaged Buttons screen was visually inspected and shows only the eight user-confirmed
   physical button labels and action controls. Internal hardware-position subtitles are absent,
   while the underlying device offsets and existing assignments remain unchanged.
+- Packaged build 11 exposes `Key Press` as a nested action menu with all keys from the shared macro
+  key catalog. Selecting `A` changed the row label to `Press A`; the test row was then restored to
+  its original `Disabled` action with no residual key-press usage in `profiles.json`.
+- Exact codec coverage confirms that a dedicated `Press A` action programs the macro matrix and a
+  34-byte body: Lenovo's 30-byte prefix followed by A down (`02 04`) and A up (`03 04`). A separate
+  two-step user macro remains explicitly classified as `Macro`.
 - The persisted 97-byte click-plus-`qwertz` macro is covered byte-for-byte across both 57-byte
   programming chunks, including Lenovo's recovered inter-chunk timing.
 - `plutil`: packaged `Info.plist` is valid.
@@ -35,7 +41,7 @@ VID:PID: 17EF:60E5
 Configuration interface: connected
 Battery: 100%
 Voltage: 4224 mV
-Flash count: 686
+Flash count: 707
 2.4 GHz link: inactive
 Stealth mode: off
 ```
@@ -74,6 +80,8 @@ command was sent by the diagnostic command.
   reported `Applied profile and lighting · flash #686`. A subsequent read-only CLI query confirmed
   the same counter. The user then confirmed that pressing the physical Top Button executed the
   complete click-plus-`qwertz` macro, including the second chunk's `ertz` events.
+- Build 11's dedicated key-press action was verified locally and in the packaged UI without
+  clicking Apply, so this verification sent no profile or button mutation to the mouse.
 - No factory reset, firmware update, or receiver-pairing command was sent.
 
 ## Release hashes
@@ -81,7 +89,7 @@ command was sent by the diagnostic command.
 These hashes are also recorded in `dist/SHA256SUMS`.
 
 ```text
-7eea29cca3e20cbfeef5250540b321a70cb970cf01eacddd8584f26161b9cb03  Legion M600 Manager.app/Contents/MacOS/M600 Manager
-3364cdaacd46348033548d0c73a8e50f7c18a8a900dc2f7204f3f4805b634293  m600ctl
-dda6227ec7529f0781a1511d566d863bad15683574a9bb0efc0abed27827f980  Legion-M600-Manager-macOS-arm64.zip
+d3b582b672d3750385878f508ae137bfd19c6783bbc148fb9dfe8aa5d5bc9801  Legion M600 Manager.app/Contents/MacOS/M600 Manager
+60c63b7ac654faeb83e01c940993d76443cfddec83498d5e896a21a7d3b133ba  m600ctl
+623e3641c1220cc6039064ae7d02bd1cd3cb70227402ea214c4c5effc516166d  Legion-M600-Manager-macOS-arm64.zip
 ```

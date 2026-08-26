@@ -147,6 +147,7 @@ public enum ButtonActionKind: String, CaseIterable, Codable, Identifiable, Senda
   case volumeDown
   case mute
   case disabled
+  case keyPress
   case macro
 
   public var id: String { rawValue }
@@ -166,6 +167,7 @@ public enum ButtonActionKind: String, CaseIterable, Codable, Identifiable, Senda
     case .volumeDown: return "Volume down"
     case .mute: return "Mute"
     case .disabled: return "Disabled"
+    case .keyPress: return "Key Press"
     case .macro: return "Macro"
     }
   }
@@ -186,7 +188,7 @@ public enum ButtonActionKind: String, CaseIterable, Codable, Identifiable, Senda
     case .volumeDown: code = 0x91
     case .mute: code = 0x92
     case .disabled: code = 0x00
-    case .macro: return nil
+    case .keyPress, .macro: return nil
     }
     return [code, 0, 0, 0, 0]
   }
@@ -239,13 +241,51 @@ public struct ButtonBinding: Codable, Hashable, Identifiable, Sendable {
   public var button: M600Button
   public var action: ButtonActionKind
   public var macro: MacroDefinition
+  public var keyPressUsage: UInt8?
 
   public var id: Int { button.rawValue }
 
-  public init(button: M600Button, action: ButtonActionKind, macro: MacroDefinition = .init()) {
+  public init(
+    button: M600Button,
+    action: ButtonActionKind,
+    macro: MacroDefinition = .init(),
+    keyPressUsage: UInt8? = nil
+  ) {
     self.button = button
     self.action = action
     self.macro = macro
+    self.keyPressUsage = keyPressUsage
+  }
+
+  public var selectedActionDisplayName: String {
+    guard action == .keyPress, let keyPressUsage else { return action.displayName }
+    return "Press \(HIDKeyNames.name(for: keyPressUsage))"
+  }
+
+  public var programmedMacroSteps: [MacroStep]? {
+    switch action {
+    case .macro:
+      return macro.steps
+    case .keyPress:
+      guard let keyPressUsage else { return nil }
+      // Key Press is deliberately distinct in the saved UI model, but the M600
+      // only understands macros here. Compile it to the smallest valid macro.
+      return [.keyDown(usage: keyPressUsage), .keyUp(usage: keyPressUsage)]
+    default:
+      return nil
+    }
+  }
+
+  public mutating func assignKeyPress(usage: UInt8) {
+    keyPressUsage = usage
+    action = .keyPress
+  }
+
+  public mutating func assignAction(_ action: ButtonActionKind) {
+    self.action = action
+    if action != .keyPress {
+      keyPressUsage = nil
+    }
   }
 }
 

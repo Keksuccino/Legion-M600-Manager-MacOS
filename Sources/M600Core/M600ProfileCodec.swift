@@ -10,6 +10,7 @@ public enum M600ProfileError: LocalizedError, Equatable {
   case missingButton(M600Button)
   case missingLeftClick
   case macroHasNoSteps(M600Button)
+  case keyPressHasNoKey(M600Button)
   case macroTooLarge(Int)
 
   public var errorDescription: String? {
@@ -32,6 +33,8 @@ public enum M600ProfileError: LocalizedError, Equatable {
       return "At least one button must remain assigned to Left click."
     case .macroHasNoSteps(let button):
       return "The macro assigned to \(button.displayName) has no steps."
+    case .keyPressHasNoKey(let button):
+      return "The key-press action assigned to \(button.displayName) has no key."
     case .macroTooLarge(let count):
       return "The encoded macro is \(count) bytes and exceeds the protocol's 65,535-byte limit."
     }
@@ -93,6 +96,10 @@ public enum M600ProfileCodec {
     where binding.action == .macro && binding.macro.steps.isEmpty {
       throw M600ProfileError.macroHasNoSteps(binding.button)
     }
+    for binding in profile.buttonBindings
+    where binding.action == .keyPress && binding.keyPressUsage == nil {
+      throw M600ProfileError.keyPressHasNoKey(binding.button)
+    }
   }
 
   public static func encode(_ profile: M600Profile) throws -> EncodedM600Profile {
@@ -106,9 +113,9 @@ public enum M600ProfileCodec {
     }
     var macros: [Int: [UInt8]] = [:]
     for binding in profile.buttonBindings {
-      if binding.action == .macro {
+      if let programmedMacroSteps = binding.programmedMacroSteps {
         matrices[binding.button.rawValue] = [0xF2, binding.button.macroID, 0, 0, 0]
-        let macroBytes = encodeMacroBody(binding.macro.steps)
+        let macroBytes = encodeMacroBody(programmedMacroSteps)
         let fullLength = 30 + macroBytes.count
         guard fullLength <= Int(UInt16.max) else {
           throw M600ProfileError.macroTooLarge(fullLength)

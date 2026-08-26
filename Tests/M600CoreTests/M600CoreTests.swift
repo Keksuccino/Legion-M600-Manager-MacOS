@@ -252,6 +252,66 @@ final class M600CoreTests: XCTestCase {
     XCTAssertTrue(steps.allSatisfy { $0.report.transferLength == 64 })
   }
 
+  func testKeyPressActionCompilesToMinimalMacroAndPreservesEditableMacro() throws {
+    var profile = M600Profile()
+    let buttonIndex = profile.buttonBindings.firstIndex(where: { $0.button == .dpi })!
+    let editableMacro = MacroDefinition(
+      name: "Keep Me",
+      steps: [.keyDown(usage: 0x05), .keyUp(usage: 0x05)]
+    )
+    profile.buttonBindings[buttonIndex].macro = editableMacro
+    profile.buttonBindings[buttonIndex].assignKeyPress(usage: 0x04)
+
+    let binding = profile.buttonBindings[buttonIndex]
+    XCTAssertEqual(binding.action, .keyPress)
+    XCTAssertEqual(binding.selectedActionDisplayName, "Press A")
+    XCTAssertEqual(binding.macro, editableMacro)
+    XCTAssertEqual(
+      binding.programmedMacroSteps,
+      [.keyDown(usage: 0x04), .keyUp(usage: 0x04)]
+    )
+
+    let encoded = try M600ProfileCodec.encode(profile)
+    XCTAssertEqual(
+      encoded.keyMatrices[M600Button.dpi.rawValue],
+      [0xF2, M600Button.dpi.macroID, 0, 0, 0]
+    )
+    XCTAssertEqual(
+      encoded.macrosByDeviceOffset[M600Button.dpi.rawValue],
+      Array(repeating: 0, count: 30) + [0x02, 0x04, 0x03, 0x04]
+    )
+
+    var restoredBinding = binding
+    restoredBinding.assignAction(.macro)
+    XCTAssertNil(restoredBinding.keyPressUsage)
+    XCTAssertEqual(restoredBinding.macro, editableMacro)
+  }
+
+  func testExplicitTwoStepMacroRemainsMacro() {
+    let binding = ButtonBinding(
+      button: .dpi,
+      action: .macro,
+      macro: MacroDefinition(
+        name: "One key macro",
+        steps: [.keyDown(usage: 0x04), .keyUp(usage: 0x04)]
+      )
+    )
+
+    XCTAssertEqual(binding.action, .macro)
+    XCTAssertEqual(binding.selectedActionDisplayName, "Macro")
+    XCTAssertNil(binding.keyPressUsage)
+  }
+
+  func testKeyPressActionRequiresASelectedKey() {
+    var profile = M600Profile()
+    let buttonIndex = profile.buttonBindings.firstIndex(where: { $0.button == .dpi })!
+    profile.buttonBindings[buttonIndex].action = .keyPress
+
+    XCTAssertThrowsError(try M600ProfileCodec.encode(profile)) { error in
+      XCTAssertEqual(error as? M600ProfileError, .keyPressHasNoKey(.dpi))
+    }
+  }
+
   func testRecordedClickQwertzMacroSpansTwoNativePacedChunks() {
     let recordedSteps: [MacroStep] = [
       .mouseDown(button: .left),
@@ -349,6 +409,27 @@ final class M600CoreTests: XCTestCase {
     let loaded = try store.load()
     XCTAssertEqual(loaded.selectedProfileID, profile.id)
     XCTAssertEqual(loaded.profiles, [profile])
+    XCTAssertEqual(loaded.schemaVersion, StoredProfiles.currentSchemaVersion)
+    try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
+  }
+
+  func testProfileStorePersistsDedicatedKeyPressIntent() throws {
+    let temporary = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString)
+      .appendingPathComponent("profiles.json")
+    let store = ProfileStore(fileURL: temporary)
+    var profile = M600Profile(name: "Key Press")
+    let buttonIndex = profile.buttonBindings.firstIndex(where: { $0.button == .dpi })!
+    profile.buttonBindings[buttonIndex].assignKeyPress(usage: 0x2C)
+    try store.save(StoredProfiles(selectedProfileID: profile.id, profiles: [profile]))
+
+    let loaded = try store.load()
+    let binding = try XCTUnwrap(
+      loaded.profiles[0].buttonBindings.first(where: { $0.button == .dpi })
+    )
+    XCTAssertEqual(binding.action, .keyPress)
+    XCTAssertEqual(binding.keyPressUsage, 0x2C)
+    XCTAssertEqual(binding.selectedActionDisplayName, "Press Space")
     XCTAssertEqual(loaded.schemaVersion, StoredProfiles.currentSchemaVersion)
     try? FileManager.default.removeItem(at: temporary.deletingLastPathComponent())
   }
